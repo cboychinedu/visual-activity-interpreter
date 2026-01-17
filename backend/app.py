@@ -7,6 +7,13 @@ from datetime import timedelta
 from logFormatter.logFormatter import YellowConsoleFormatter
 from flask import Flask, url_for, session, request, redirect 
 
+# Importing the routes 
+from Register.registerRoute import register 
+from Login.loginRoute import login 
+
+# Loading the environment variables 
+load_dotenv()
+
 # Creating the flask application 
 app = Flask(__name__, static_folder=None, template_folder=None) 
 app.url_map.strict_slashes = False 
@@ -85,6 +92,10 @@ def dated_url_for(endpoint, **values):
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for) 
+
+# Registering the blueprint 
+app.register_blueprint(register, url_prefix="/register")
+app.register_blueprint(login, url_prefix="/login")
 
 # Running the backend server 
 if __name__ == "__main__": 

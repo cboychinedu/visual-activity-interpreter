@@ -3,5 +3,5 @@ flask_cors
 bcrypt 
 python-dotenv
 PyJWT
-
+psycopg2
 

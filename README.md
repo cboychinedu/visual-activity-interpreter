@@ -39,6 +39,14 @@ The program follows an end-to-end pipeline designed for low-latency interpretati
 
 **Visualization:** The React.js frontend renders the live stream with a dynamic UI layer that "interprets" the action in real-time.
 
+## Dependencies For MacOS 
+
+** Postgresql ** : Ensure you install postgresql using the command line interface. 
+
+```bash 
+brew install postgresql
+```
+
 
 ## 🔧 Installation & Setup
 
