@@ -42,7 +42,7 @@ The program follows an end-to-end pipeline designed for low-latency interpretati
 
 **Data Ingestion:** High-volume video frames are captured and pre-processed using custom extraction modules.
 
-**Model Inference:** Features are extracted and passed through optimized **Deep Learning Vison ** models.
+**Model Inference:** Features are extracted and passed through optimized **Deep Learning Vison** models.
 
 **Visualization:** The React.js frontend renders the live stream with a dynamic UI layer that "interprets" the action in real-time.
 
