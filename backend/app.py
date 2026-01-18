@@ -2,7 +2,7 @@
 import os 
 import logging 
 from flask_cors import CORS 
-from dotenv import load_dotenv 
+from dotenv import load_dotenv, find_dotenv
 from datetime import timedelta
 from logFormatter.logFormatter import YellowConsoleFormatter
 from flask import Flask, url_for, session, request, redirect 
@@ -12,7 +12,7 @@ from Register.registerRoute import register
 from Login.loginRoute import login 
 
 # Loading the environment variables 
-load_dotenv()
+load_dotenv(find_dotenv(), verbose=True) 
 
 # Creating the flask application 
 app = Flask(__name__, static_folder=None, template_folder=None) 

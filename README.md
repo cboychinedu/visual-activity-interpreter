@@ -65,6 +65,16 @@ npm install
 
 ```
 
+2.1. **Setting your environment values:** 
+Ensure you have your environment variables set: 
+```bash
+SECRET_KEY=""
+DATABASE_HOST="localhost"
+DATABASE_PORT="5432" 
+DATABASE_PASSWORD=""
+DATABASE_NAME=""
+```
+
 3. **Deployment:**
 The application is designed for **Azure App Services** but can be run locally for testing.
 
