@@ -1,5 +1,12 @@
 # Visual Activity Interpreter
 
+<h3> Home Page </h3>
+<img src="./images/HomePage.png" alt="homepage logo">
+
+
+
+<h3> Data Flow Diagram </h3> 
+
 <img src="./images/image.jpg">
 
 This repository contains a high-performance **Visual Language Interpretation** system that processes real-time camera frames to identify and display user activities. By leveraging **Computer Vision**, **Deep Learning** and **Vision Language Models**, the program provides immediate, context-aware feedback by overlaying activity descriptions directly onto the video stream.
