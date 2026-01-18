@@ -48,7 +48,7 @@ The program follows an end-to-end pipeline designed for low-latency interpretati
 
 ## Dependencies For MacOS 
 
-** Postgresql ** : Ensure you install postgresql using the command line interface. 
+**Postgresql** : Ensure you install postgresql using the command line interface. 
 
 ```bash 
 brew install postgresql
