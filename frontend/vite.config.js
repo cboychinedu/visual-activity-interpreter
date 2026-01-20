@@ -19,4 +19,16 @@ export default defineConfig({
       '@images': path.resolve(__dirname, './src/Images'),
     },
   },
+  // --- ADDED SOLUTION BELOW ---
+  server: {
+    watch: {
+      // Forces Vite to check for file changes every 100ms
+      // Essential for WSL2, Docker, or networked drives
+      usePolling: true,
+    },
+    // Optional: ensures HMR (Hot Module Replacement) uses the correct protocol
+    hmr: {
+      overlay: true, // Shows error overlay in browser
+    }
+  },
 })
