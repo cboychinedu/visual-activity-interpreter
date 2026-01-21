@@ -3,13 +3,11 @@ import { Fragment, useState } from 'react';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import AlertComponent from '@components/Alert';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, LogIn } from 'lucide-react';
 
 // Creating the login component 
 const Login = () => {
-    // Initializing the navigate hook 
-    const navigate = useNavigate();
 
     // Setting the state for the alert
     const [displayAlert, setDisplayAlert] = useState(false); 
@@ -32,64 +30,36 @@ const Login = () => {
             return;
         }
 
-        if (password === "") {
+        // Checking the password 
+        else if (password === "") {
             setAlertSeverity("error");
             setDisplayAlert(true);
             setAlertMessage("Password is required!");
             return;
         }
 
-        const loginData = JSON.stringify({ email, password });
-        const serverUrl = `${import.meta.env.VITE_SERVER_URL}/login`;
+        // Else if all the forms were filed 
+        else {
+            // Getting the user's login data 
+            const loginData = JSON.stringify({ email, password });
 
-        // try {
-        //     const response = await fetch(serverUrl, {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: loginData,
-        //     });
+            // 
+            console.log(loginData); 
+            
+            const serverUrl = `${import.meta.env.VITE_SERVER_URL}/login`;
+        }
 
-        //     const responseData = await response.json();
+    }
 
-        //     if (!response.ok) {
-        //         throw new Error(responseData.message || "Login failed");
-        //     }
-
-        //     if (responseData.status === "success") {
-        //         setAlertSeverity("success");
-        //         setDisplayAlert(true);
-        //         setAlertMessage("Login successful! Redirecting...");
-
-        //         // Store token if your backend sends one (e.g., JWT)
-        //         if(responseData.token) {
-        //             localStorage.setItem("userToken", responseData.token);
-        //         }
-
-        //         // Redirect to dashboard or home after 2 seconds
-        //         setTimeout(() => {
-        //             navigate("/");
-        //         }, 2000);
-        //     } else {
-        //         setAlertSeverity("error");
-        //         setDisplayAlert(true);
-        //         setAlertMessage(responseData.message);
-        //     }
-
-        // } catch (error) {
-        //     console.error("Error during login:", error.message);
-        //     setAlertSeverity("error");
-        //     setDisplayAlert(true);
-        //     setAlertMessage(error.message || "Error connecting to the server!");
-        // }
-    };
-
+    // Rendering the login jsx file 
     return (
         <Fragment>
+            {/* Adding the navbar */}
             <Navbar />
 
-            {/* Alert Display */}
+            {/* Addding alert */}
             {displayAlert && (
-                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4"> 
+                <div> 
                     <AlertComponent severity={alertSeverity} message={alertMessage}/> 
                 </div>
             )}
@@ -175,6 +145,7 @@ const Login = () => {
                             <div>
                                 <button
                                     type="submit"
+                                    onClick={handleLogin}
                                     className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all group"
                                 >
                                     Sign In
@@ -211,4 +182,50 @@ const Login = () => {
     );
 };
 
+// Exporting the login component 
 export default Login;
+
+
+
+
+
+
+        // try {
+        //     const response = await fetch(serverUrl, {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: loginData,
+        //     });
+
+        //     const responseData = await response.json();
+
+        //     if (!response.ok) {
+        //         throw new Error(responseData.message || "Login failed");
+        //     }
+
+        //     if (responseData.status === "success") {
+        //         setAlertSeverity("success");
+        //         setDisplayAlert(true);
+        //         setAlertMessage("Login successful! Redirecting...");
+
+        //         // Store token if your backend sends one (e.g., JWT)
+        //         if(responseData.token) {
+        //             localStorage.setItem("userToken", responseData.token);
+        //         }
+
+        //         // Redirect to dashboard or home after 2 seconds
+        //         setTimeout(() => {
+        //             navigate("/");
+        //         }, 2000);
+        //     } else {
+        //         setAlertSeverity("error");
+        //         setDisplayAlert(true);
+        //         setAlertMessage(responseData.message);
+        //     }
+
+        // } catch (error) {
+        //     console.error("Error during login:", error.message);
+        //     setAlertSeverity("error");
+        //     setDisplayAlert(true);
+        //     setAlertMessage(error.message || "Error connecting to the server!");
+        // }

@@ -62,7 +62,7 @@ class DatabaseManager:
                     # if the user data is not empty, execute the block of code below 
                     responseData = {
                         "status": "success", 
-                        "exits": True, 
+                        "exists": True, 
                         "message": "User found!", 
                         "data": userData
                     }
