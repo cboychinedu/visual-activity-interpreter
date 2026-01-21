@@ -73,7 +73,7 @@ npm install
 ```
 
 2.1. **Setting your environment values:** 
-Ensure you have your environment variables set: 
+Ensure you have your environment variables set inside the backend directory. Create a .env file inside the backend folder, and fill it with the following values, and add your parameters.: 
 ```bash
 SECRET_KEY=""
 DATABASE_HOST="localhost"
@@ -82,8 +82,17 @@ DATABASE_PASSWORD=""
 DATABASE_NAME=""
 ```
 
+2.1. <b> Setting your environment values: </b> 
+<p>
+Ensure you have your environment variables set inside your frontend directory. Create a .env file inside your frontend directory, and fill the following: 
+</p>
+
+```bash 
+REACT_APP_SERVER_URL=""
+```
+
 3. **Deployment:**
-The application is designed for **Azure App Services** but can be run locally for testing.
+
 
 
 ## 📝 Credentials & Recognition

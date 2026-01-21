@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Home from "./Pages/Home/Home"; 
 import Login from "./Pages/Login/Login"; 
 import Register from "./Pages/Register/Register"; 
+import About from './Pages/About/About';
 
 // Creating the App component 
 class App extends Component {
@@ -19,6 +20,7 @@ class App extends Component {
           <Routes>
             {/* Adding the routes */}
             <Route path="/" element={<Home />} /> 
+            <Route path="/about" element={<About />} /> 
             <Route path="/login" element={<Login /> } /> 
             <Route path="/register" element={<Register /> } /> 
           </Routes>

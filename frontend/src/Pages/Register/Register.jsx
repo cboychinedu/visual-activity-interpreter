@@ -1,12 +1,16 @@
 // Importing the necessary modules 
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import AlertComponent from '@components/Alert';
+import { useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, ArrowRight } from 'lucide-react';
 
 // Creating the register component 
 const Register = () => {
+    // Initializing the navigate hook 
+    const navigate = useNavigate();
+
     // Setting the state for the alert
     const [displayAlert, setDisplayAlert] = useState(false); 
     const [alertMessage, setAlertMessage] = useState(null); 
@@ -19,7 +23,7 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState(""); 
 
     // Creating a function for handling the user register 
-    const handleRegister = (event) => {
+    const handleRegister = async (event) => {
         // Prevent default submissing 
         event.preventDefault(); 
 
@@ -69,13 +73,88 @@ const Register = () => {
         }
 
         else {
-            // 
-            setAlertSeverity("success"); 
-            setDisplayAlert(true); 
-            setAlertMessage("All forms complete"); 
-            
+            // Creating the json object for the register data 
+            const userData = JSON.stringify({
+                fullname, 
+                email, 
+                password, 
+            }); 
+
+            // Setting the server url 
+            const serverUrl = `${import.meta.env.VITE_SERVER_URL}/register`; 
+
+            // Using try catch block to send a request to the backend server 
+            try {
+                // Make the request 
+                const response = await fetch(serverUrl, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json'}, 
+                    body: userData, 
+                }); 
+
+                // If there was no response from the server 
+                if (!response.ok) {
+                    // Handle server side errors 
+                    const errorData = await response.json(); 
+                    throw new Error(errorData.message || "Registration failed"); 
+                }
+
+                // Else if the server return a result 
+                const responseData = await response.json(); 
+
+                // If the user was registered, execute this block of code 
+                if (responseData.status === "error") {
+                    // Display the error message 
+                    setAlertSeverity("error"); 
+                    setDisplayAlert(true); 
+                    setAlertMessage(responseData.message); 
+
+                    // Wait for 5 seconds and remove the message 
+                    setInterval(() => {
+                        // Remove the error message 
+                        setAlertSeverity(null); 
+                        setDisplayAlert(false); 
+                        setAlertMessage(null); 
+                    }, 5000); 
+                }
+
+                // Else if the response data was an info, execute the block 
+                // of code below  
+                else if (responseData.status === "info") {
+                    // Display the status message 
+                    setAlertSeverity("info"); 
+                    setDisplayAlert(true); 
+                    setAlertMessage(responseData.message); 
+                    console.log(responseData); 
+
+                }
+
+                // Else if the data was successful 
+                else {
+                    // Display the status message 
+                    setAlertSeverity("success"); 
+                    setDisplayAlert(true); 
+                    setAlertMessage(responseData.message); 
+
+                    // Wait for 5 seconds and redirect the user to the login page 
+                    setInterval(() => {
+                        // Redirect the user to the login page 
+                        navigate("/login"); 
+                    }, 5000)
+                }
+            }
+
+            // Catch the errror 
+            catch (error) {
+                // Log the error to the screen 
+                console.error("Error during fetch", error.message); 
+
+                // Display the error message 
+                setAlertSeverity("error"); 
+                setDisplayAlert(true); 
+                setAlertMessage("Error connecting to the server!"); 
+            }   
         }
- 
     }
 
   // Rendering the component 

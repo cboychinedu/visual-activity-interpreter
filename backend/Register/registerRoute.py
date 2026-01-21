@@ -31,7 +31,7 @@ def registerPage():
         # Execute the block of code if the user data exists 
         responseMessage = {
             "message": "User already exists!", 
-            "status": "error", 
+            "status": "info", 
             "statusCode": 400
         }
 

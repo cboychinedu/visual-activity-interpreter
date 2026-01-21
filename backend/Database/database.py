@@ -208,7 +208,7 @@ class DatabaseManager:
                 databaseResponse = {
                     "connection": True, 
                     "status": "success", 
-                    "message": "Data saved on the database!"
+                    "message": "User registered!"
                 }
 
                 # Returning the database response 

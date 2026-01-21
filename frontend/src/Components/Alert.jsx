@@ -1,6 +1,5 @@
 // Importing the necessary modules 
 import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
 import { Fragment } from 'react';
 
 const AlertComponent = ({severity, message}) => {
