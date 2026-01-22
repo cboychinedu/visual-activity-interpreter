@@ -80,12 +80,12 @@ const Register = () => {
                 password, 
             }); 
 
-            // Setting the server url 
+            // Setting the backend server url 
             const serverUrl = `${import.meta.env.VITE_SERVER_URL}/register`; 
 
             // Using try catch block to send a request to the backend server 
             try {
-                // Make the request 
+                // Make the request to the register route 
                 const response = await fetch(serverUrl, {
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json'}, 
@@ -99,7 +99,7 @@ const Register = () => {
                     throw new Error(errorData.message || "Registration failed"); 
                 }
 
-                // Else if the server return a result 
+                // Else if the server returned a result 
                 const responseData = await response.json(); 
 
                 // If the user was registered, execute this block of code 

@@ -59,7 +59,6 @@ def loginPage():
                 "email": email, 
                 "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30), 
                 "isLoggedIn": True
-
             }
 
             # Encoding the payload
@@ -69,11 +68,36 @@ def loginPage():
                 algorithm="HS256"
             )
 
+            # Building the response data 
+            responseData = {
+                "status": "success", 
+                "message": "User logged in successfully!",
+                "token": encodedJwt
+            }
 
-        return jsonify({
-            "test": "User"
-        })
+            # Sending the response 
+            return jsonify(responseData); 
 
-    # Else 
+        # Else if the user password is not correct 
+        else: 
+            # Execute this block of code if the user password is not correct 
+            # Build the response data 
+            responseData = {
+                "status": "error", 
+                "message": "Invalid email or password!"
+            }
+
+            # Sending the response message 
+            return jsonify(responseData); 
+
+    # Else if the user data does not exit on the database
     else: 
-        pass  
+        # Else if the user's data is not on the database 
+        # Build the response data 
+        responseData = {
+            "status": "error", 
+            "message": "Invalid email or password!"
+        }
+
+        # Sending the response message 
+        return jsonify(responseData); 

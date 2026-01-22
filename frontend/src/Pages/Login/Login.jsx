@@ -1,4 +1,5 @@
 // Importing the necessary modules 
+import Cookies from 'js-cookie';
 import { Fragment, useState } from 'react';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
@@ -8,7 +9,6 @@ import { Mail, Lock, ArrowRight, LogIn } from 'lucide-react';
 
 // Creating the login component 
 const Login = () => {
-
     // Setting the state for the alert
     const [displayAlert, setDisplayAlert] = useState(false); 
     const [alertMessage, setAlertMessage] = useState(null); 
@@ -20,6 +20,7 @@ const Login = () => {
 
     // Function to handle the login request
     const handleLogin = async (event) => {
+        // Preventing default submission 
         event.preventDefault();
 
         // Basic Validation
@@ -40,15 +41,74 @@ const Login = () => {
 
         // Else if all the forms were filed 
         else {
-            // Getting the user's login data 
-            const loginData = JSON.stringify({ email, password });
-
-            // 
-            console.log(loginData); 
+            // Creating the user's login data as a json object  
+            const loginData = JSON.stringify({ email, password }); 
             
+            // Setting the backend server url 
             const serverUrl = `${import.meta.env.VITE_SERVER_URL}/login`;
-        }
 
+            // Using try catch block to send a request to the backend server 
+            try {
+                // Make the post request to the login server route 
+                const response = await fetch(serverUrl, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json'}, 
+                    body: loginData, 
+                }); 
+
+                // if there was no response from the server 
+                if (!response.ok) {
+                    // Handle the server side errors 
+                    const errorData = await response.json(); 
+                    throw new Error(errorData.message || "Login failed"); 
+                }
+
+                // Else if the server returned a result 
+                const responseData = await response.json(); 
+
+                // If the user password was correct, execute this block of code 
+                if (responseData.status === "success") {
+                    // Saving the token value 
+                    Cookies.set('userTokenData', responseData.token, { expires: 1 });
+
+                    // Displaying the success message 
+                    setAlertSeverity("success"); 
+                    setDisplayAlert(true);
+                    setAlertMessage(responseData.message); 
+
+                    // Wait for 3 seconds and navigate the user to the dashboard page 
+                    setInterval(() => {
+                        // Remove the error message 
+                        setAlertSeverity(null); 
+                        setDisplayAlert(false); 
+                        setAlertMessage(null); 
+
+                        // Navigate the user to the dashboard page 
+                        window.location.href = "/dashboard";  
+                    }, 3000)
+                }
+
+                // Else if the response data was not a success 
+                else {
+                    // Displaying the error message 
+                    setAlertSeverity("error"); 
+                    setDisplayAlert(true); 
+                    setAlertMessage(responseData.message); 
+                }
+
+            }
+
+            // Catch the error 
+            catch (error) {
+                // Log the error to the screen 
+                console.error("Error during fetch: ", error.message); 
+
+                // Display the error message
+                setAlertSeverity("error"); 
+                setDisplayAlert(true); 
+                setAlertMessage("Error connecting to the server!");
+            }
+        }
     }
 
     // Rendering the login jsx file 
@@ -184,48 +244,3 @@ const Login = () => {
 
 // Exporting the login component 
 export default Login;
-
-
-
-
-
-
-        // try {
-        //     const response = await fetch(serverUrl, {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: loginData,
-        //     });
-
-        //     const responseData = await response.json();
-
-        //     if (!response.ok) {
-        //         throw new Error(responseData.message || "Login failed");
-        //     }
-
-        //     if (responseData.status === "success") {
-        //         setAlertSeverity("success");
-        //         setDisplayAlert(true);
-        //         setAlertMessage("Login successful! Redirecting...");
-
-        //         // Store token if your backend sends one (e.g., JWT)
-        //         if(responseData.token) {
-        //             localStorage.setItem("userToken", responseData.token);
-        //         }
-
-        //         // Redirect to dashboard or home after 2 seconds
-        //         setTimeout(() => {
-        //             navigate("/");
-        //         }, 2000);
-        //     } else {
-        //         setAlertSeverity("error");
-        //         setDisplayAlert(true);
-        //         setAlertMessage(responseData.message);
-        //     }
-
-        // } catch (error) {
-        //     console.error("Error during login:", error.message);
-        //     setAlertSeverity("error");
-        //     setDisplayAlert(true);
-        //     setAlertMessage(error.message || "Error connecting to the server!");
-        // }
