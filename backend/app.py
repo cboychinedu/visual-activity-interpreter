@@ -7,9 +7,10 @@ from datetime import timedelta
 from logFormatter.logFormatter import YellowConsoleFormatter
 from flask import Flask, url_for, session, request, redirect 
 
-# Importing the routes 
-from Register.registerRoute import register 
+# Importing the necessary routes 
 from Login.loginRoute import login 
+from History.historyRoute import history
+from Register.registerRoute import register 
 
 # Loading the environment variables 
 load_dotenv(find_dotenv(), verbose=True) 
