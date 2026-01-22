@@ -1,7 +1,13 @@
 # Importing the necessary modules 
+import os 
+import jwt 
 import bcrypt
+import datetime 
 from Database.database import DatabaseManager
 from flask import jsonify, request, Blueprint 
+
+# Getting the secret key 
+secretKey = os.getenv("SECRET_KEY")
 
 # Creating the login route blueprint 
 login = Blueprint("login", __name__)
@@ -44,14 +50,30 @@ def loginPage():
         # Verifying the password hash 
         condition = bcrypt.checkpw(password, passwordHash)
 
-        print(condition) 
+        # Checking the condition if the password verification 
+        # is correct 
+        if (condition): 
+            # Generate a token for the user and send it back 
+            # to the client 
+            payload = {
+                "email": email, 
+                "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30), 
+                "isLoggedIn": True
+
+            }
+
+            # Encoding the payload
+            encodedJwt = jwt.encode(
+                payload, 
+                secretKey, 
+                algorithm="HS256"
+            )
 
 
         return jsonify({
             "test": "User"
         })
 
-    # # Checking the contents of the user data 
-    # if (userData["exists"]): 
-    #     # Execute the block of code if the user data exists 
-    #     print(userData) 
+    # Else 
+    else: 
+        pass  

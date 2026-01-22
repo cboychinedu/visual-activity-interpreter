@@ -1,0 +1,3 @@
+# Using expo to starting the app, inside the folder type the following commands. 
+# For a blank setup. This would ensure you use jsx and not typescript.  
+$ npx create-expo-app@latest --template blank . 
