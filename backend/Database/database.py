@@ -45,7 +45,7 @@ class DatabaseManager:
     # Check 
     def getUserDataForLogin(self, email): 
         # Creating the sql statement 
-        sqlStatement = """SELECT id, email, password FROM users WHERE email = %s;"""
+        sqlStatement = """SELECT id, fullname, email, password FROM users WHERE email = %s;"""
 
         # Using try catch block to make connection 
         try: 

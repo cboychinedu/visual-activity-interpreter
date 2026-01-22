@@ -56,7 +56,8 @@ def loginPage():
             # Generate a token for the user and send it back 
             # to the client 
             payload = {
-                "email": email, 
+                "email": email,
+                "fullname": userData["data"]["fullname"],  
                 "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30), 
                 "isLoggedIn": True
             }

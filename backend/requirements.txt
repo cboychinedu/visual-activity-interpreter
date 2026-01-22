@@ -1,6 +1,7 @@
 Flask
 flask_cors 
 bcrypt 
+flask-socketio
 python-dotenv
 PyJWT
 psycopg2
