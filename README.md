@@ -1,7 +1,7 @@
 # Visual Activity Interpreter
 
 <h3> Home Page </h3>
-<img src="./images/HomePage.png" alt="homepage logo">
+<img src="./images/vlmDisplay.gif" alt="homepage logo">
 
 
 

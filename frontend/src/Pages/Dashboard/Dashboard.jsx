@@ -36,7 +36,7 @@ const Dashboard = () => {
                                 <Activity className="text-blue-500" />
                                 Live Analysis Console
                             </h1>
-                            <p className="text-slate-400 mt-2">Real-time Visual Language Model (VLM) Interpretation</p>
+                            <p className="text-slate-400 mt-2">Welcome Mbonu Chinedum to your visual live intepretation. </p>
                         </div>
                         <div className="flex gap-3">
                             <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg flex items-center gap-2 text-xs font-mono">
