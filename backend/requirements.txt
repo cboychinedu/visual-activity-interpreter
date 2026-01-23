@@ -4,5 +4,8 @@ bcrypt
 flask-socketio
 python-dotenv
 PyJWT
+opencv-python
 psycopg2
+ollama 
+
 
