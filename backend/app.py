@@ -11,6 +11,7 @@ from flask import Flask, url_for, session, request, redirect
 # Importing the necessary routes 
 from Login.loginRoute import login 
 from History.historyRoute import history
+from Dashboard.dashboardRoute import dashboard
 from Register.registerRoute import register 
 
 # Loading the environment variables 
@@ -99,8 +100,9 @@ def override_url_for():
     return dict(url_for=dated_url_for) 
 
 # Registering the blueprint 
-app.register_blueprint(register, url_prefix="/register")
 app.register_blueprint(login, url_prefix="/login")
+app.register_blueprint(dashboard, url_for="/dashboard")
+app.register_blueprint(register, url_prefix="/register")
 
 # Running the backend server 
 if __name__ == "__main__": 

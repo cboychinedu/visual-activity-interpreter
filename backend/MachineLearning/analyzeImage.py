@@ -17,8 +17,8 @@ class MachineLearning:
             # Perform inference using Ollama 
             # Model 'llava' is common for vision tasks 
             response = ollama.generate(
-                model="llava", 
-                prompt="Describe the main activity or objects in this frame in a long sentence", 
+                model="gemma3", 
+                prompt="Describe the main activity or objects in this frame in a very long sentence. Do not ask further question after the analysis.", 
                 images=[imageBytes]
             )
 
