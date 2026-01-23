@@ -9,6 +9,7 @@
 
 
 <h3> Introduction </h3>
+
 This repository contains a high-performance **Visual Language Interpretation** system that processes real-time camera frames to identify and display user activities. By leveraging **Computer Vision**, **Deep Learning** and **Vision Language Models**, the program provides immediate, context-aware feedback by overlaying activity descriptions directly onto the video stream.
 
 The architecture follows a cloud-native design pattern, ensuring scalability and efficient model inference.
