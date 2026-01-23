@@ -73,9 +73,9 @@ brew install postgresql
 <p> Clone the respository using the commands below, and change directory into the repository directory after download </p>  
 
 ```bash
-    $ git clone https://github.com/cboychinedu/visual-interpreter.git
+    $ git clone https://github.com/cboychinedu/visual-activity-interpreter.git
 
-    $ cd visual-interpreter
+    $ cd visual-activity-interpreter
 
 ```
 
