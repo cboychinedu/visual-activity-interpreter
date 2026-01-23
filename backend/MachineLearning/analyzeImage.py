@@ -1,9 +1,6 @@
 # Importing the necessary modules 
-import os 
-import cv2 
 import ollama 
 import base64 
-import numpy as np 
 
 # Creating a class for performing the image analysis 
 class MachineLearning: 
@@ -24,6 +21,11 @@ class MachineLearning:
 
             # Getting the description 
             description = response.get("response", "No interpretation available.")
+
+            # Save the response into the postgres database 
+            #########
+            #########ß
+            # Inference save to the database 
 
             # Creating a response object 
             responseData = {

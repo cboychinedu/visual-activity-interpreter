@@ -1,8 +1,11 @@
+# Importing the necessary modules 
 import psycopg2
 
+# Creating the connection 
 conn = psycopg2.connect(
         host="localhost", dbname="postgres", 
-        password="", port=5432)
+        password="", port=5432
+)
 
 # Creating the cursor 
 cursor = conn.cursor()
