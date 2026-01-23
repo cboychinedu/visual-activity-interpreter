@@ -2,14 +2,16 @@
 import os 
 import logging 
 from flask_cors import CORS 
-from dotenv import load_dotenv, find_dotenv
 from datetime import timedelta
+from Socket.socket import socketio
+from dotenv import load_dotenv, find_dotenv
 from logFormatter.logFormatter import YellowConsoleFormatter
 from flask import Flask, url_for, session, request, redirect 
 
 # Importing the necessary routes 
 from Login.loginRoute import login 
 from History.historyRoute import history
+from Dashboard.dashboardRoute import dashboard
 from Register.registerRoute import register 
 
 # Loading the environment variables 
@@ -25,6 +27,9 @@ app.permanent_session_lifetime = timedelta(days=10)
 
 # Enable CORS configuration 
 CORS(app)
+
+# Allowing cross origin for socket 
+socketio.init_app(app, cors_allowed_origins="*")
 
 # Set up the path to the logs directory and file
 logsDir = os.path.join("Logs")
@@ -95,9 +100,11 @@ def override_url_for():
     return dict(url_for=dated_url_for) 
 
 # Registering the blueprint 
-app.register_blueprint(register, url_prefix="/register")
 app.register_blueprint(login, url_prefix="/login")
+app.register_blueprint(dashboard, url_for="/dashboard")
+app.register_blueprint(register, url_prefix="/register")
 
 # Running the backend server 
 if __name__ == "__main__": 
-    app.run(host="0.0.0.0", port="3001", debug=True)
+    # app.run(host="0.0.0.0", port="3001", debug=True)
+    socketio.run(app, host="0.0.0.0", port="3001", debug=True)

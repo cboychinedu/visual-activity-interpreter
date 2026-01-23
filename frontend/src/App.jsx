@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Home from "./Pages/Home/Home"; 
 import Login from "./Pages/Login/Login"; 
 import About from './Pages/About/About';
+import History from './Pages/History/History';
 import NotFound from './Pages/Notfound/Notfound';
 import Register from "./Pages/Register/Register"; 
 import Dashboard from './Pages/Dashboard/Dashboard';
@@ -53,6 +54,10 @@ class App extends Component {
             <Route 
               path="/dashboard" 
               element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/history"
+              element={isLoggedIn ? <History /> : <Navigate to="/login" replace /> }
             />
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} /> 
