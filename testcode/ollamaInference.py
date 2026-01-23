@@ -14,7 +14,7 @@ try:
         # Using Gemma 3 (4b is the recommended starting point for vision tasks)
         response = ollama.generate(
             model="gemma3", 
-            prompt="Describe the main activity or objects in this frame in a very long sentence", 
+            prompt="Describe the main activity or objects in this frame in a very long sentence. Do not ask further question after the analysis.", 
             images=[imageBytes] # Works with bytes, base64 strings, or file paths
         )
 

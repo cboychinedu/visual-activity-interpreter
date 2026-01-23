@@ -1,10 +1,11 @@
+// Importing the necessary modules 
 import Cookies from 'js-cookie';
+import io from 'socket.io-client';
 import { jwtDecode } from "jwt-decode";
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
-import React, { Fragment, useState, useRef, useEffect } from 'react';
+import { Fragment, useState, useRef, useEffect } from 'react';
 import { Play, Square, Activity, ShieldCheck, Zap, Terminal } from 'lucide-react';
-import io from 'socket.io-client';
 
 // Connect to your Flask server
 const serverUrl = `${import.meta.env.VITE_SERVER_URL}`; 
@@ -12,96 +13,161 @@ const socket = io(serverUrl);
 
 // Creating the dashboard component 
 const Dashboard = () => {
+    // Auth & Cookie Logic
     const userCookie = Cookies.get("userTokenData"); 
-    let fullname = "User"; 
+    let fullname = "User";  
 
+    // if the user cookie exists, execute the block of code 
+    // below 
     if (userCookie) {
-        let decodedToken = jwtDecode(userCookie); 
-        fullname = decodedToken.fullname; 
+        // Using try catch block to decode the jwt token
+        try {
+            // Decoding the token, and setting the fullname to the 
+            // global variable "fullname"
+            let decodedToken = jwtDecode(userCookie); 
+            fullname = decodedToken.fullname; 
+        } 
+        // On error decoding the token, log the error to the console. 
+        catch (e) {
+            // Logging the error 
+            console.error("Token decode error:", e);
+        }
     }
 
+    // State Management
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [interpretation, setInterpretation] = useState("System standby. Awaiting input...");
     
-    // Refs for video handling
+    // REFS: Crucial for fixing the "stale closure" bug
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const intervalRef = useRef(null);
+    
+    // This ref tracks the status for the socket listener without causing re-renders
+    const isAnalyzingRef = useRef(false);
 
-    // Handle incoming results from Flask
+    // Sync the ref whenever the state changes
     useEffect(() => {
-        // Event listener for successful connection
+        // Setting the ref analyzing as isAnalyzing
+        isAnalyzingRef.current = isAnalyzing;
+    }, [isAnalyzing]);
+
+    // Socket Event Listeners
+    useEffect(() => {
+        // On socket connection 
         socket.on('connect', () => {
+            // Log the status to the console
             console.log("Socket Connected! ID:", socket.id);
         });
 
-        // Event listener for disconnection
+        // On socket disconnection
         socket.on('disconnect', () => {
+            // Log the status to the console 
             console.log("Socket Disconnected");
         });
 
-        // Listen for VLM results
+        // Listen for VLM predicted results
         socket.on('inferenceResult', (data) => {
+            // BUG FIX: Use the Ref here instead of state
+            if (!isAnalyzingRef.current) {
+                // Log the status to the console and stop the process 
+                console.log("Analysis inactive. Ignoring incoming result.");
+                return; 
+            }
+
+            // if the isAnalyzing is true, show the predicted results. 
             setInterpretation(data.text);
         });
 
+        // Cleanup on unmount
         return () => {
             socket.off('connect');
             socket.off('disconnect');
             socket.off('inferenceResult');
+
+            // Clear the interval
+            if (intervalRef.current) clearInterval(intervalRef.current);
         };
     }, []);
 
+    // Function for starting the video and analysis
     const startVideo = async () => {
+        // Using try catch block to get the video frames 
         try {
+            // Getting the video frames 
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+            // if the videoRef current value is true, execute the block of code below 
             if (videoRef.current) {
+                // Set the video ref as the stream 
                 videoRef.current.srcObject = stream;
             }
             
-            // Start the frame capture loop (every 2 seconds to respect VLM speed)
+            // Update states
+            setIsAnalyzing(true);
+            setInterpretation("Engine active. Processing live feed...");
+
+            // Start the frame capture loop (every 2 seconds)
             intervalRef.current = setInterval(() => {
+                // Send the video frame to the server for analysis 
                 sendFrame();
             }, 2000);
 
-            setIsAnalyzing(true);
-            setInterpretation("Engine active. Processing live feed...");
-        } catch (err) {
+        } 
+        // On error generated, log the error to the console, and display it 
+        // to the user 
+        catch (err) {
+            // Logging the error, and displaying the error to the user. 
             console.error("Error accessing webcam:", err);
             setInterpretation("Error: Could not access camera.");
         }
     };
 
+    // Function for stopping the video and analysis
     const stopVideo = () => {
+        // Stop the camera tracks
         if (videoRef.current && videoRef.current.srcObject) {
             const tracks = videoRef.current.srcObject.getTracks();
             tracks.forEach(track => track.stop());
             videoRef.current.srcObject = null;
         }
-        if (intervalRef.current) clearInterval(intervalRef.current);
+
+        // Stop the frame sending interval
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+
+        // Update states
         setIsAnalyzing(false);
-        setInterpretation("Analysis paused.");
+        setInterpretation("Analysis stopped.");
     };
 
+    // Captures current video frame and sends to server
     const sendFrame = () => {
+        // Setting the video and canvas objects 
         const video = videoRef.current;
         const canvas = canvasRef.current;
-        if (video && canvas && video.readyState === 4) {
+        
+        // Only send if the analysis is still active and video is ready
+        if (isAnalyzingRef.current && video && canvas && video.readyState === 4) {
             const context = canvas.getContext('2d');
-            // Match canvas size to video resolution
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Compress to JPEG to reduce socket payload size
+            // Compress and Emit
             const imageData = canvas.toDataURL('image/jpeg', 0.6);
             socket.emit('videoFrame', imageData);
         }
     };
 
+    // Rendering the jsx component 
     return (
         <Fragment>
+            {/* Adding the navbar */}
             <Navbar />
+
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 lg:p-8">
                 <div className="max-w-6xl mx-auto pt-10">
                     
@@ -135,10 +201,8 @@ const Dashboard = () => {
                                     </div>
                                     
                                     <div className="aspect-video bg-black flex items-center justify-center relative">
-                                        {/* Hidden canvas used for capturing frames */}
                                         <canvas ref={canvasRef} className="hidden" />
                                         
-                                        {/* Real Video Element */}
                                         <video 
                                             ref={videoRef} 
                                             autoPlay 
@@ -171,32 +235,50 @@ const Dashboard = () => {
                                     >
                                         {isAnalyzing ? <><Square className="w-4 h-4 fill-current" /> Stop Analysis</> : <><Play className="w-4 h-4 fill-current" /> Start Analysis</>}
                                     </button>
+                                    <div className="flex items-center gap-2 text-slate-500">
+                                        <ShieldCheck className="w-5 h-5" />
+                                        <span className="text-xs font-medium">Encrypted Link</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* RIGHT: VLM Display */}
-                        <div className="lg:col-span-1 space-y-6">
+                        <div className="lg:col-span-1">
                             <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden h-full flex flex-col shadow-2xl">
                                 <div className="bg-slate-800/50 p-4 border-b border-slate-700 flex items-center gap-2">
                                     <Terminal className="w-4 h-4 text-blue-400" />
-                                    <span className="text-sm font-bold text-white tracking-wide">VLM INTERPRETATION</span>
+                                    <span className="text-sm font-bold text-white tracking-wide uppercase">AI Interpretation Log</span>
                                 </div>
                                 
-                                <div className="p-6 flex-grow font-mono text-sm space-y-4 overflow-y-auto max-h-[400px]">
-                                    <div className="text-blue-400">&gt; Initializing VAI Core...</div>
-                                    <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300 leading-relaxed shadow-inner">
+                                <div className="p-6 flex-grow font-mono text-sm space-y-4 overflow-y-auto max-h-[500px]">
+                                    <div className="text-blue-500/70">&gt; Connection established...</div>
+                                    <div className="text-blue-500/70">&gt; VLM Core v1.0.4 loaded...</div>
+                                    
+                                    <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300 leading-relaxed shadow-inner min-h-[100px]">
                                         {interpretation}
                                     </div>
+                                    
+                                    {isAnalyzing && (
+                                        <div className="flex items-center gap-2 text-[10px] text-slate-600 animate-pulse uppercase tracking-tighter">
+                                            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                            Streaming metadata...
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-4 bg-slate-800/20 border-t border-slate-700">
+                                    <p className="text-[10px] text-slate-500 text-center uppercase">Real-Time Vision Pipeline</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {/* Adding the footer */}
             <Footer />
         </Fragment>
     );
 };
 
+// Exporting the dashboard 
 export default Dashboard;
