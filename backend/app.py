@@ -101,8 +101,9 @@ def override_url_for():
 
 # Registering the blueprint 
 app.register_blueprint(login, url_prefix="/login")
-app.register_blueprint(dashboard, url_for="/dashboard")
+app.register_blueprint(history, url_prefix="/history")
 app.register_blueprint(register, url_prefix="/register")
+app.register_blueprint(dashboard, url_prefix="/dashboard")
 
 # Running the backend server 
 if __name__ == "__main__": 

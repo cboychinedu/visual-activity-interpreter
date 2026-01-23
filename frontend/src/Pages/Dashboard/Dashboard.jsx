@@ -15,7 +15,8 @@ const socket = io(serverUrl);
 const Dashboard = () => {
     // Auth & Cookie Logic
     const userCookie = Cookies.get("userTokenData"); 
-    let fullname = "User";  
+    let fullname;  
+    let email
 
     // if the user cookie exists, execute the block of code 
     // below 
@@ -75,6 +76,20 @@ const Dashboard = () => {
                 return; 
             }
 
+            // if the data status is error 
+            if (data.status === "error") {
+                // Destroy the token and log out the user
+                // Remove the user token 
+                Cookies.remove("userTokenData"); 
+
+                // Wait for 2 seconds and redirect the user to the home page 
+                setInterval(() => {
+                    // Navigating the user to the home page 
+                    window.location.href = "/";  
+                }, 2000);
+
+            }
+
             // if the isAnalyzing is true, show the predicted results. 
             setInterpretation(data.text);
         });
@@ -111,7 +126,7 @@ const Dashboard = () => {
             intervalRef.current = setInterval(() => {
                 // Send the video frame to the server for analysis 
                 sendFrame();
-            }, 2000);
+            }, 4000);
 
         } 
         // On error generated, log the error to the console, and display it 
@@ -158,7 +173,7 @@ const Dashboard = () => {
             
             // Compress and Emit
             const imageData = canvas.toDataURL('image/jpeg', 0.6);
-            socket.emit('videoFrame', imageData);
+            socket.emit('videoFrame', imageData, userCookie);
         }
     };
 

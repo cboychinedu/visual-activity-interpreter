@@ -13,10 +13,11 @@ cursor = conn.cursor()
 # Executing the sql statement 
 cursor.execute(""" 
         CREATE TABLE IF NOT EXISTS history (
-            id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, 
+            id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            imageData VARCHAR(8000) NOT NULL,
             email VARCHAR(255) NOT NULL, 
             timestamp VARCHAR(255) NOT NULL, 
-            interpretation VARCHAR(255) NOT NULL, 
+            interpretation VARCHAR(2000) NOT NULL, 
             duration VARCHAR(255) NOT NULL
         ); 
 """)

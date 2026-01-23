@@ -58,7 +58,7 @@ def loginPage():
             payload = {
                 "email": email,
                 "fullname": userData["data"]["fullname"],  
-                "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30), 
+                "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=31), 
                 "isLoggedIn": True
             }
 

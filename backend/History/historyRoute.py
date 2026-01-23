@@ -4,8 +4,6 @@
 # Importing the necessary modules 
 import os 
 import jwt 
-import datetime 
-import logging 
 from Database.database import DatabaseManager
 from flask import jsonify, request, Blueprint 
 
@@ -20,8 +18,11 @@ db = DatabaseManager()
 
 # Creating the first route for retrival 
 # of the analyzed video frame 
-@history.route("/get-history", methods=["POST"])
-def getHistory(): 
+@history.route("/", methods=["POST"])
+def getHistory():
+    # Getting the headers 
+    headers = request.headers['userToken']
+    print(headers)  
     pass 
 
 
