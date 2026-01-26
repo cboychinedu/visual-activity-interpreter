@@ -9,7 +9,7 @@ class DatabaseManager:
     def __init__(self):
         self.host = "localhost"
         self.port = 5432
-        self.dbname = os.getenv("DATABASE_NAME")
+        self.dbname = os.getenv("DATABASENAME", "postgres")
         self.password = os.getenv("DATABASE_PASSWORD")
 
         # Setting the cursor, and conn values to None 
@@ -31,6 +31,9 @@ class DatabaseManager:
 
             # Creating the cursor object 
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+
+            # Displaying the success message 
+            print(f"[Success]: Database connected!")
 
         # Except exception as error, execute the block of 
         # code below  

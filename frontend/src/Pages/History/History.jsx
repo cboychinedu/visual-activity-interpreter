@@ -1,4 +1,5 @@
 // Importing the necessary modules 
+import Cookies from "js-cookie"; 
 import React, { Fragment, useState, useEffect } from 'react';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
@@ -10,7 +11,8 @@ import {
     Filter, 
     Calendar,
     FileText,
-    ExternalLink
+    ExternalLink,
+    MessageCircleQuestionMarkIcon
 } from 'lucide-react';
 
 // Creating the history component 
@@ -46,14 +48,63 @@ const History = () => {
         }
     ]);
 
+    // Getting the user token data 
+    const userToken = Cookies.get("userTokenData"); 
+
+    // Creating a function for fetching the history
+    const fetchHistory = async () => {
+        // Using try catch block to fetch the history data 
+        try {
+            // Setting the server url 
+            const serverUrl = `${import.meta.env.VITE_SERVER_URL}/history`;
+
+            // Making the response to the history server 
+            const response = await fetch(serverUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'userToken': userToken
+                }
+            });
+
+            // if the response was an error 
+            if (!response.ok) {
+                // Display the error message 
+                throw new Error('Failed to fetch history data');
+            }
+
+            // Get the history data 
+            const data = await response.json();
+            console.log(data); 
+
+            // setHistoryData(data);
+        } catch (err) {
+            setError(err.message);
+            console.error("Error fetching history:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Delete function
     const deleteEntry = (id) => {
         setHistoryData(historyData.filter(item => item.id !== id));
     };
 
+    // Fetch the data on mount
+    useEffect(() => {       
+        // Calling the fetch history function to fetch the data. 
+        fetchHistory();
+    }, []);
+
+
+    // Rendering the history component 
     return (
         <Fragment>
+            {/* Adding the navbar */}
             <Navbar />
             
+            {/* Adding the main component */}
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 lg:p-8">
                 <div className="max-w-6xl mx-auto pt-10">
                     
