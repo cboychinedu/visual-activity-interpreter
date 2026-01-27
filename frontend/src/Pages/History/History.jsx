@@ -1,64 +1,44 @@
 // Importing the necessary modules 
 import Cookies from "js-cookie"; 
-import React, { Fragment, useState, useEffect } from 'react';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import { 
     Clock, 
-    ChevronRight, 
     Trash2, 
     Download, 
     Filter, 
     Calendar,
     FileText,
     ExternalLink,
-    MessageCircleQuestionMarkIcon
+    Loader2 
 } from 'lucide-react';
+import { 
+    Fragment, 
+    useState, 
+    useEffect 
+} from 'react';
 
 // Creating the history component 
 const History = () => {
-    // Mock data representing previous analysis sessions
-    const [historyData, setHistoryData] = useState([
-        {
-            id: "VAI-8829",
-            date: "2026-01-23",
-            time: "14:20",
-            duration: "05:12",
-            frames: 156,
-            topResult: "High activity: Person running",
-            status: "Completed"
-        },
-        {
-            id: "VAI-8828",
-            date: "2026-01-23",
-            time: "10:05",
-            duration: "12:45",
-            frames: 382,
-            topResult: "Low activity: Stationary subject",
-            status: "Completed"
-        },
-        {
-            id: "VAI-8710",
-            date: "2026-01-22",
-            time: "18:45",
-            duration: "02:10",
-            frames: 65,
-            topResult: "Detected: Hand gestures (sign language)",
-            status: "Flagged"
-        }
-    ]);
+    // Setting the history data state 
+    const [historyData, setHistoryData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null); 
 
-    // Getting the user token data 
+    // Getting the user token value from the cookie storage 
     const userToken = Cookies.get("userTokenData"); 
 
-    // Creating a function for fetching the history
+    // Creating a function to fetch the history data from the backend 
     const fetchHistory = async () => {
-        // Using try catch block to fetch the history data 
+        // Using try catch block to perform the fetch request 
         try {
+            // Loading bar 
+            setIsLoading(true);
+
             // Setting the server url 
             const serverUrl = `${import.meta.env.VITE_SERVER_URL}/history`;
 
-            // Making the response to the history server 
+            // Making the fetch request to the server 
             const response = await fetch(serverUrl, {
                 method: 'GET',
                 headers: {
@@ -67,48 +47,54 @@ const History = () => {
                 }
             });
 
-            // if the response was an error 
+            // if the response was an error, throw an error message 
             if (!response.ok) {
-                // Display the error message 
                 throw new Error('Failed to fetch history data');
             }
 
-            // Get the history data 
-            const data = await response.json();
-            console.log(data); 
-
-            // setHistoryData(data);
-        } catch (err) {
+            // On success, save the response into a data array
+            const responseData = await response.json();
+            
+            // Display the history data by saving it into the state variable 
+            setHistoryData(Array.isArray(responseData.data) ? responseData.data : []);
+            // setHistoryData(data); 
+        } 
+        // On errors generated, catch the error and log it to the console. 
+        catch (err) {
+            // Showing the error message 
             setError(err.message);
+
+            // Logging the error message to the console 
             console.error("Error fetching history:", err);
-        } finally {
+        } 
+        // finally remove the loading bar 
+        finally {
+            // Removing the loaded bar 
             setIsLoading(false);
         }
     };
 
-    // Delete function
+    // Creating a function for deleting the history data 
     const deleteEntry = (id) => {
-        setHistoryData(historyData.filter(item => item.id !== id));
+        setHistoryData(prev => prev.filter(item => item.id !== id));
     };
 
-    // Fetch the data on mount
+    // On component mount, fetch the history data 
     useEffect(() => {       
-        // Calling the fetch history function to fetch the data. 
+        // Fetch the history data 
         fetchHistory();
     }, []);
 
 
-    // Rendering the history component 
+    // Rendering the jsx component 
     return (
         <Fragment>
-            {/* Adding the navbar */}
             <Navbar />
             
-            {/* Adding the main component */}
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 lg:p-8">
                 <div className="max-w-6xl mx-auto pt-10">
                     
-                    {/* Header Section */}
+                    {/* Header */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
                         <div className="text-center md:text-left">
                             <h1 className="text-3xl font-bold text-white flex items-center justify-center md:justify-start gap-3">
@@ -128,15 +114,15 @@ const History = () => {
                         </div>
                     </div>
 
-                    {/* Stats Overview */}
+                    {/* Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                         <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
                             <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Sessions</p>
-                            <h3 className="text-3xl font-bold text-white mt-1">128</h3>
+                            <h3 className="text-3xl font-bold text-white mt-1">{historyData.length}</h3>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
-                            <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Frames Processed</p>
-                            <h3 className="text-3xl font-bold text-blue-400 mt-1">14.2k</h3>
+                            <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Status</p>
+                            <h3 className="text-lg font-bold text-blue-400 mt-1">{isLoading ? "Syncing..." : "Up to date"}</h3>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
                             <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Average Accuracy</p>
@@ -144,7 +130,7 @@ const History = () => {
                         </div>
                     </div>
 
-                    {/* History Table/List */}
+                    {/* History Table */}
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -158,25 +144,25 @@ const History = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800">
-                                    {historyData.map((item) => (
+                                    {!isLoading && historyData.map((item) => (
                                         <tr key={item.id} className="hover:bg-slate-800/30 transition-colors group">
                                             <td className="p-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
                                                         <FileText className="w-4 h-4" />
                                                     </div>
-                                                    <span className="font-mono text-sm text-white">{item.id}</span>
+                                                    <span className="font-mono text-sm text-white">{item.id || 'N/A'}</span>
                                                 </div>
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm text-slate-200">{item.date}</span>
-                                                    <span className="text-xs text-slate-500">{item.time}</span>
+                                                    {/* 4. FIXED: Added optional chaining for safer string splitting */}
+                                                    <span className="text-sm text-slate-200">{item.timestamp?.split(",")[1]}</span>
+                                                    <span className="text-xs text-slate-500">{item.timestamp?.split(",")[0]}</span>
                                                 </div>
                                             </td>
                                             <td className="p-4">
-                                                <span className="text-sm text-cyan-400 font-medium">{item.topResult}</span>
-                                                <p className="text-[10px] text-slate-500 mt-1">{item.frames} frames analyzed</p>
+                                                <span className="text-sm text-cyan-400 font-medium">{item.interpretation}</span>
                                             </td>
                                             <td className="p-4 text-sm text-slate-400">
                                                 {item.duration}
@@ -200,8 +186,16 @@ const History = () => {
                             </table>
                         </div>
                         
+                        {/* Loading State UI */}
+                        {isLoading && (
+                            <div className="p-20 text-center">
+                                <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-2" />
+                                <p className="text-slate-500">Loading your history...</p>
+                            </div>
+                        )}
+
                         {/* Empty State */}
-                        {historyData.length === 0 && (
+                        {!isLoading && historyData.length === 0 && (
                             <div className="p-20 text-center">
                                 <div className="inline-flex p-4 bg-slate-800 rounded-full mb-4">
                                     <Calendar className="w-8 h-8 text-slate-600" />
@@ -213,7 +207,6 @@ const History = () => {
                     </div>
                 </div>
             </div>
-
             <Footer />
         </Fragment>
     );

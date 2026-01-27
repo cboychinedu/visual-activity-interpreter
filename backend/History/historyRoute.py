@@ -36,32 +36,45 @@ def getHistory():
         # Ensuring that it's only logged in users that have the ability to 
         # Access the database 
         if (decodedToken["isLoggedIn"]): 
-            # Connect to the data base and extract the history data 
-            # Based on the decoded email values 
-            print(decodedToken)
+            # Connect to the data base 
+            db.connectToDb()
+
+            # extract the history data based on the decoded email values
+            historyResponse = db.getUserHistory(
+                email=decodedToken["email"]
+            ) 
+
+            # if the history Response is success, execute the block 
+            # of code below 
+            if (historyResponse["exists"]):
+                # Send the data to the client 
+                return jsonify(historyResponse)
             
+            # if the response data resulted in an error, execute the 
+            # block of code below 
+            elif (historyResponse["status"] == "error"):
+                return jsonify(historyResponse)
             
-            
-            
-            
-            
-            # Returning the history data 
-            return jsonify({
-                "data": "history-data-logged-in", 
-                "status": "success", 
-                "statusCode": 200
-            }); 
+            # Else if there was an error generated, execute the 
+            # block of code below 
+            else: 
+                # Convert the response into a json object before sending it 
+                # to the client
+                return jsonify(historyResponse) 
+
 
         # Else if the the user is not logged in, execute this block 
-        # of code below 
-        responseMessage = {
-            "status": "info", 
-            "message": "User not logged in", 
-            "statusCode": 404
-        }
+        # of code below
+        else: 
+            # Build the response message 
+            responseMessage = {
+                "status": "info", 
+                "message": "User not logged in", 
+                "statusCode": 404
+            }
 
-        # Sending the response message 
-        return jsonify(responseMessage) 
+            # Sending the response message 
+            return jsonify(responseMessage) 
     
     # On error occured, execute the block of code below 
     except Exception as error: 
