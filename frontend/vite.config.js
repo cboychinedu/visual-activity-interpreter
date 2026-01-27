@@ -2,6 +2,7 @@
 import path from 'path';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
         plugins: [['babel-plugin-react-compiler']],
       },
     }),
+    basicSsl()
   ],
   resolve: {
     alias: {
@@ -21,6 +23,8 @@ export default defineConfig({
   },
   // --- ADDED SOLUTION BELOW ---
   server: {
+    host: true, 
+    https: true,
     watch: {
       // Forces Vite to check for file changes every 100ms
       // Essential for WSL2, Docker, or networked drives
