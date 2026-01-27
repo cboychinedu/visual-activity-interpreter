@@ -4,8 +4,8 @@ import jwt
 from flask import Blueprint
 from datetime import datetime 
 from Socket.socket import socketio 
-from Database.database import DatabaseManager
 from MachineLearning.analyzeImage import MachineLearning
+from Database import DatabaseConnection, DashboardDatabase
 
 # Getting the secret key 
 secretKey = os.getenv("SECRET_KEY")
@@ -14,13 +14,16 @@ secretKey = os.getenv("SECRET_KEY")
 dashboard = Blueprint("dashboard", __name__) 
 
 # Creating an instance of the database class 
-db = DatabaseManager() 
+db = DatabaseConnection() 
 
 # Creating an instance of the machine learning class 
 mlClass = MachineLearning() 
 
 # Conneting to the database 
-db.connectToDb()
+db.connect()
+
+# Creating an instance of the dashboard class 
+dashboardDb = DashboardDatabase(db)
 
 # Displaying a message if the user is connected
 @socketio.on("connect")
@@ -72,7 +75,7 @@ def performAnalysis(imageData, userToken):
 
                 # Saving the data into the database but first connect 
                 # to the database 
-                response = db.insertAnalyzedData(
+                response = dashboardDb.insertAnalyzedData(
                     imageData=imageData, 
                     email=email, 
                     timestamp=timestamp, 

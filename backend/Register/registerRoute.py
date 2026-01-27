@@ -1,13 +1,16 @@
 # Importing the necessary modules 
 import bcrypt
-from Database.database import DatabaseManager
+from Database import DatabaseConnection, RegisterDatabase
 from flask import jsonify, request, Blueprint
 
 # Creating the register route blueprint 
 register = Blueprint("register", __name__) 
 
 # Creating an instance of the database class 
-db = DatabaseManager()
+db = DatabaseConnection()
+
+# Connecting to the database 
+db.connect()
 
 # Creating a route for the register page 
 @register.route("/", methods=["POST"])
@@ -20,11 +23,11 @@ def registerPage():
     email = userData["email"]
     password = userData["password"]
 
-    # Connecting to the database 
-    db.connectToDb() 
+    # Creating an instance of the register database class 
+    registerUsersDb = RegisterDatabase(db)
 
     # Checking to see if the user is already on the database 
-    userData = db.getUserDataForRegistration(email) 
+    userData = registerUsersDb.getUserDataForRegistration(email)
 
     # Checking the contents of the user data 
     if (userData["exists"]): 
@@ -46,7 +49,7 @@ def registerPage():
         passwordHash = bcrypt.hashpw(password, bcrypt.gensalt())
 
         # Saving the user details into the database 
-        responseMessage = db.insertNewUser(
+        responseMessage = registerUsersDb.insertNewUser(
             fullname=fullname, 
             email=email, 
             password=passwordHash

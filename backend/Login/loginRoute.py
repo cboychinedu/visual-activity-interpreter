@@ -3,8 +3,8 @@ import os
 import jwt 
 import bcrypt
 import datetime 
-from Database.database import DatabaseManager
 from flask import jsonify, request, Blueprint 
+from Database import DatabaseConnection, LoginDatabase
 
 # Getting the secret key 
 secretKey = os.getenv("SECRET_KEY")
@@ -13,7 +13,10 @@ secretKey = os.getenv("SECRET_KEY")
 login = Blueprint("login", __name__)
 
 # Creating an instance of the database class 
-db = DatabaseManager() 
+db = DatabaseConnection() 
+
+# Connecting to the database 
+db.connect()
 
 # Creating the route for the login route 
 @login.route("/", methods=["POST"])
@@ -23,13 +26,13 @@ def loginPage():
 
     # Getting the individual data 
     email = userData["email"]
-    password = userData["password"]
+    password = userData["password"] 
 
-    # Connecting to the database 
-    db.connectToDb() 
+    # Creating an instance of the login database class 
+    loginUserDb = LoginDatabase(db)
 
     # Checking to see if the user is already on the database 
-    userData = db.getUserDataForLogin(email) 
+    userData = loginUserDb.getUserDataForLogin(email)
 
     # if the user data exists
     if (userData["exists"]): 

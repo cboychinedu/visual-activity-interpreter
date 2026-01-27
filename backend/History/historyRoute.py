@@ -4,8 +4,8 @@
 # Importing the necessary modules 
 import os 
 import jwt 
-from Database.database import DatabaseManager
 from flask import jsonify, request, Blueprint 
+from Database import DatabaseConnection, HistoryDatabase
 
 # Getting the secret key 
 secretKey = os.getenv("SECRET_KEY")
@@ -14,7 +14,10 @@ secretKey = os.getenv("SECRET_KEY")
 history = Blueprint("history", __name__)
 
 # Creating an instance of the database class 
-db = DatabaseManager() 
+db = DatabaseConnection() 
+
+# Connect to the data base 
+db.connect()
 
 # Creating the first route for retrival 
 # of the analyzed video frame 
@@ -36,11 +39,11 @@ def getHistory():
         # Ensuring that it's only logged in users that have the ability to 
         # Access the database 
         if (decodedToken["isLoggedIn"]): 
-            # Connect to the data base 
-            db.connectToDb()
+            # Creating an instance of the history database class 
+            historyDb = HistoryDatabase(db)
 
             # extract the history data based on the decoded email values
-            historyResponse = db.getUserHistory(
+            historyResponse = historyDb.getUserHistory(
                 email=decodedToken["email"]
             ) 
 
