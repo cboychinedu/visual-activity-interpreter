@@ -12,7 +12,7 @@ export default defineConfig({
         plugins: [['babel-plugin-react-compiler']],
       },
     }),
-    basicSsl()
+    // basicSsl()
   ],
   resolve: {
     alias: {
@@ -23,8 +23,8 @@ export default defineConfig({
   },
   // --- ADDED SOLUTION BELOW ---
   server: {
-    host: true, 
-    https: true,
+    // host: true, 
+    // https: true,
     watch: {
       // Forces Vite to check for file changes every 100ms
       // Essential for WSL2, Docker, or networked drives

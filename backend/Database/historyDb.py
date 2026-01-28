@@ -5,6 +5,84 @@ class HistoryDatabase:
         # load the db object 
         self.db = db 
 
+    # Creating a method for deleting the history data 
+    def deleteUserHistory(self, id): 
+        # Creating the sql statement 
+        sqlStatement = "DELETE FROM history WHERE id = %s;"
+
+        # Using try catch block to make the connection 
+        try: 
+            # Checking if the database is connection 
+            if self.db.cursor: 
+                # Execute the sql statement 
+                self.db.cursor.execute(sqlStatement, (id,))
+
+                # Commiting the changes to the database 
+                if self.db.conn: 
+                    # Commiting the changes 
+                    self.db.conn.commit() 
+
+                # Checking if any row was actually deleted 
+                if self.db.cursor.rowcount > 0: 
+                    # if the history data was deleted, execute the block of 
+                    # code below 
+                    responseData = {
+                        "status": "success", 
+                        "deleted": True, 
+                        "message": "History entry deleted successfully!"
+                    }
+
+                    # Returning the success response 
+                    return responseData
+                
+                # Else if no row was found with that ID value 
+                else: 
+                    # Create the response data 
+                    responseData = {
+                        "status": "error", 
+                        "deleted": False, 
+                        "message": "History entry not found!"
+                    }
+
+                    # Returning the error response  
+                    return responseData
+
+            # Else if there was an error connecting to the database, 
+            # Execute this block of code 
+            else: 
+                # Creating the response data 
+                responseData = {
+                    "status": "error", 
+                    "message": "Database not connected!", 
+                    "connection": False 
+                }
+
+                # Sending the response data 
+                return responseData 
+            
+
+        # On error generated, display the error to the console
+        except Exception as error: 
+            # Display the error to the console 
+            print(f"[Error]: {error}")
+
+            # Rollaback the database operation in case of error, to keep 
+            # the database in consistent state 
+            if self.db.conn: 
+                # Rollback 
+                self.db.conn.rollback() 
+
+            # Returning the error message
+            responseData = {
+                "connection": False, 
+                "status": "error", 
+                "message": str(error) 
+            }
+
+            # Returning the error message
+            return responseData
+
+
     # Creating a method for getting the history data 
     def getUserHistory(self, email): 
         # Creating the sql statement 

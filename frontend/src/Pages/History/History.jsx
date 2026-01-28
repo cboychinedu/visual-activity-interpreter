@@ -78,7 +78,47 @@ const History = () => {
 
     // Creating a function for deleting the history data by passing the id value 
     const deleteEntry = (id) => {
-        setHistoryData(prev => prev.filter(item => item.id !== id));
+        // Making a fetch request to the backend to delete the history by it's 
+        // Selected id value 
+        const deleteData = JSON.stringify({
+            id: id
+        }); 
+
+        // Setting the server ip address 
+        const serverUrl = `${import.meta.env.VITE_SERVER_URL}/history/delete-history`;
+        
+        // Creating the fetch request 
+        fetch(serverUrl, {
+            method: "DELETE", 
+            headers: {
+                "Content-Type": "application/json", 
+                "userToken": Cookies.get("userTokenData")
+            }, 
+            body: deleteData
+        })
+        // On response, execute the block of code below 
+        .then(response => response.json())
+        .then(responseData => {
+            console.log(responseData); 
+
+            // if the response data status is success 
+            if (responseData.status === "success") {
+                // Execute the block of code below 
+                setHistoryData(prev => prev.filter(item => item.id !== id));
+
+            }
+
+            // Else if it was an error 
+            else {
+                // Log the error message 
+                console.log(responseData.message);
+            }
+        })
+        .catch((error) => {
+            // Display the error message    
+            console.error("Error: ", error); 
+
+        })
     };
 
     // On component mount, fetch the history data 

@@ -97,5 +97,44 @@ def getHistory():
 
 # Creating a route for deleting the history 
 @history.route("/delete-history", methods=["DELETE"])
-def deleteHistory(): 
-    pass 
+def deleteHistory():
+    # Getting the headers 
+    userToken = request.headers["userToken"]
+
+    # Getting the user login data 
+    userData = request.get_json()
+
+    # Decoding the user token and check if the user is logged in 
+    # Using try except block to decode the token 
+    try: 
+        # Decode the token 
+        decodedToken = jwt.decode(
+            userToken, 
+            key=secretKey, 
+            algorithms="HS256"
+        )
+
+        # Ensuring that it's only logged in users that have the ability to 
+        # Access the database
+        if (decodedToken["isLoggedIn"]): 
+            # Creating an instance of the history databadse class 
+            historyDb = HistoryDatabase(db) 
+
+            # Deleting the user history by specifying an id value 
+            historyResponse = historyDb.deleteUserHistory(
+                id=userData["id"]
+            )
+
+            # Returning the response 
+            return jsonify(historyResponse)
+
+    except Exception as error:
+        # Building the error message 
+        responseMessage = {
+            "status": "error", 
+            "message": str(error), 
+            "statusCode": 500
+        } 
+
+        # Returning the error message 
+        return responseMessage 

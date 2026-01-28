@@ -14,7 +14,7 @@ cursor = conn.cursor()
 cursor.execute(""" 
         CREATE TABLE IF NOT EXISTS history (
             id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            imageData VARCHAR(8000) NOT NULL,
+            imageData VARCHAR(20000) NOT NULL,
             email VARCHAR(255) NOT NULL, 
             timestamp VARCHAR(255) NOT NULL, 
             interpretation VARCHAR(2000) NOT NULL, 
