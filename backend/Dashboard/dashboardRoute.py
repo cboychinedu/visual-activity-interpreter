@@ -73,6 +73,8 @@ def performAnalysis(imageData, userToken):
                 # Getting the duration 
                 duration = imageAnalysisResult["inferenceTime"]
 
+                print(len(imageData))
+
                 # Saving the data into the database but first connect 
                 # to the database 
                 response = dashboardDb.insertAnalyzedData(

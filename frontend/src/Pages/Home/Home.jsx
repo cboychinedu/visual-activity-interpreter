@@ -38,9 +38,9 @@ const Home = () => {
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
                     <iframe 
-                        className="aspect-video bg-slate-900 flex items-center justify-center"  
-                        src="https://www.youtube.com/embed/iltJwXQnsJQ" 
-                        title="How to train the model on Blackbox Analytics" 
+                        className="aspect-video bg-slate-900 flex items-center justify-center" 
+                        src="https://www.youtube.com/embed/hMo6ytoXhZo" 
+                        title="VLM Project" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         referrerpolicy="strict-origin-when-cross-origin" 

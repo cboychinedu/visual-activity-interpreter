@@ -1,4 +1,4 @@
-# Importing the necessary modules 
+# importing the necessary modules 
 import os 
 import logging 
 from flask_cors import CORS 
