@@ -1,6 +1,7 @@
 # Visual Activity Interpreter
 
 <h3> Home Page </h3>
+
 <img src="./images/vlmDisplay.gif" alt="homepage logo">
 
 <h3> Data Flow Diagram </h3> 
