@@ -63,14 +63,15 @@ const styles = StyleSheet.create({
   },
   toastContainer: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    left: 20,
+    top: Platform.OS === 'ios' ? 15 : 20,
+    left: 5,
     right: 20,
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    width: "60%", 
     zIndex: 9999,
     elevation: 10,
     shadowColor: '#000',
@@ -79,7 +80,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
   },
   successToast: {
-    backgroundColor: '#10b981', // Emerald 500
+    // backgroundColor: '#10b981', // Emerald 500
+    backgroundColor: '#2563eb'
   },
   errorToast: {
     backgroundColor: '#ef4444', // Red 500
