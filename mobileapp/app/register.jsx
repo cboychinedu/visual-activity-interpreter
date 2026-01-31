@@ -18,12 +18,8 @@ import styles from '../styles/registerStyles';
 
 // Creating the register component 
 const Register = () => {
+  // Setting the router hook 
   const router = useRouter();
-
-  // Alert State
-  const [displayAlert, setDisplayAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(null);
-  const [alertSeverity, setAlertSeverity] = useState(null);
 
   // Form State
   const [fullname, setFullname] = useState("");
@@ -32,49 +28,107 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async () => {
-    // // Validation Logic (remains largely the same)
-    // if (fullname === "") {
-    //   showAlert("error", "Fullname is missing!");
-    //   return;
-    // }
-    // if (email === "" || !email.includes("@")) {
-    //   showAlert("error", "Please enter a valid email address!");
-    //   return;
-    // }
-    // if (password === "" || password !== confirmPassword) {
-    //   showAlert("error", password === "" ? "Enter a password!" : "Passwords do not match!");
-    //   return;
-    // }
+    // Validating the fullname 
+    if (fullname === "") {      
+      // Displaying the alert message 
+      Alert.alert("Fullname is missing!");
+      return; 
 
-    // const userData = JSON.stringify({ fullname, email, password });
-    
-    // // Replace with your actual Env config for Native
-    // const serverUrl = "https://your-api.com/register"; 
+    }
 
-    // try {
-    //   const response = await fetch(serverUrl, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: userData,
-    //   });
+    // Validation of the email 
+    else if (email === "" || !email.includes("@")) {
+      // Displaying the alert message 
+      Alert.alert("Please enter a valid email address!"); 
+      return; 
 
-    //   const responseData = await response.json();
+    }
 
-    //   if (responseData.status === "success") {
-    //     showAlert("success", responseData.message);
-    //     setTimeout(() => navigation.navigate("Login"), 3000);
-    //   } else {
-    //     showAlert("error", responseData.message || "Registration failed");
-    //   }
-    // } catch (error) {
-    //   showAlert("error", "Error connecting to the server!");
-    // }
-  };
+    // Validating the password 
+    else if (password === "") {
+      // Displaying the alert message 
+      Alert.alert("Please enter a valid password"); 
+      return; 
 
-  const showAlert = (severity, message) => {
-    setAlertSeverity(severity);
-    setAlertMessage(message);
-    setDisplayAlert(true);
+    }
+
+    // Validating the confirm password 
+    else if (confirmPassword === "") {
+      // Displaying the alert message 
+      Alert.alert("Confirm password is missing!"); 
+      return; 
+
+    }
+
+    // Checking if the password match 
+    else if (confirmPassword !== password) {
+      // Displaying the alert message 
+      Alert.alert("Passwords do not match!"); 
+      return; 
+
+    }
+
+    // Else if all the fileds are filled 
+    else {
+      // Create a json object to have all the user registration data 
+      const userData = JSON.stringify({
+         fullname: fullname, 
+         email: email, 
+         password: password 
+      }); 
+
+      // Setting the backend server url 
+      const serverUrl = `${process.env.SERVER_URL}/register`; 
+
+      console.log(serverUrl); 
+
+      // Using try catch block to send a request to the backend server 
+      try {
+        // Sending the data to the server 
+        fetch(serverUrl, {
+            method: "POST", 
+            headers: { "Content-Type": "application/json"}, 
+            body: userData
+        })
+        // Handling the response from the server 
+        .then((response) => response.json())
+        .then((responseData) => {
+          // Handle the successful register response 
+          if (responseData.status === "success") {
+            // Show a dialog box 
+            Alert.alert("User registered!"); 
+
+            // Redirect the user to the login page 
+            router.replace("/login"); 
+
+          }
+          // Else if the response was an error or info 
+          else {
+            // Show the dialog box 
+            Alert.alert(responseData.message); 
+
+          }
+        })
+        // Catching the error 
+        .catch((error) => {
+          // Log the error 
+          console.error(error); 
+
+          // Show the error message 
+          Alert.alert(error.message); 
+        })
+      }
+
+      // Catch the error if the data was not sent 
+      catch (error) {
+        // Log the error 
+        console.log(error); 
+
+        // Display the error message 
+        Alert.alert(error); 
+      }
+    }
+
   };
 
   return (
@@ -85,9 +139,6 @@ const Register = () => {
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          
-          {/* Alert Area */}
-          {displayAlert && Alert.alert("Fullname is missing!")}
 
           {/* Header */}
           <View style={styles.header}>
@@ -111,7 +162,6 @@ const Register = () => {
                   placeholderTextColor="#64748b"
                   value={fullname}
                   onChangeText={setFullname}
-                  onFocus={() => setDisplayAlert(false)}
                 />
               </View>
             </View>
@@ -129,7 +179,6 @@ const Register = () => {
                   autoCapitalize="none"
                   value={email}
                   onChangeText={setEmail}
-                  onFocus={() => setDisplayAlert(false)}
                 />
               </View>
             </View>
@@ -146,7 +195,22 @@ const Register = () => {
                   secureTextEntry
                   value={password}
                   onChangeText={setPassword}
-                  onFocus={() => setDisplayAlert(false)}
+                />
+              </View>
+            </View>
+
+            {/* Confirm Password */}
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}> Confirm Password </Text>
+              <View style={styles.inputContainer}>
+                 <Lock color="#64748b" size={20} style={styles.icon} />
+                 <TextInput
+                  style={styles.input}
+                  placeholder="Confirm password"
+                  placeholderTextColor="#64748b"
+                  secureTextEntry
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
                 />
               </View>
             </View>
@@ -165,7 +229,7 @@ const Register = () => {
 
             <TouchableOpacity 
               style={styles.loginSecondaryBtn} 
-                onPress={() => router.push('/login')}
+                onPress={() => router.replace('/login')}
             >
               <Text style={styles.loginSecondaryText}>Log in</Text>
             </TouchableOpacity>

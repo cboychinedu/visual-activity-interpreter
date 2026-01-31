@@ -22,6 +22,8 @@ dist-ssr
 # Mobile app 
 mobileapp/node_modules
 /mobileapp/node_modules 
+mobileapp/.env
+/mobileapp/.env
 
 # Editor directories and files
 .vscode/*

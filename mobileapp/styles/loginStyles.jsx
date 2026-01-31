@@ -1,5 +1,5 @@
 // Importing the necessary modules 
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 // Creating the styles for the login page 
 const styles = StyleSheet.create({
@@ -60,6 +60,35 @@ const styles = StyleSheet.create({
     borderColor: '#334155',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  toastContainer: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: 20,
+    right: 20,
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+  },
+  successToast: {
+    backgroundColor: '#10b981', // Emerald 500
+  },
+  errorToast: {
+    backgroundColor: '#ef4444', // Red 500
+  },
+  toastText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   registerButtonText: { color: '#cbd5e1', fontWeight: '500' }
 });
