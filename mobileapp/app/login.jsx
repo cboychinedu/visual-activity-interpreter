@@ -113,8 +113,8 @@ const Login = () => {
       // Catch the error 
       catch (error) {
         // Display the error message 
-        console.error("Login Error: ", error); 
-        Alert.alert("Network Error", "Could not connect to the server, check your connection.")
+        console.log("Login Error: ", error); 
+        showToast("Could not connect to the server", "error"); 
       }
     }
 

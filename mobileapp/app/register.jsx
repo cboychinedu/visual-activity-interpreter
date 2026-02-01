@@ -80,8 +80,6 @@ const Register = () => {
       // Setting the backend server url 
       const serverUrl = `${process.env.SERVER_URL}/register`; 
 
-      console.log(serverUrl); 
-
       // Using try catch block to send a request to the backend server 
       try {
         // Sending the data to the server 
@@ -112,7 +110,7 @@ const Register = () => {
         // Catching the error 
         .catch((error) => {
           // Log the error 
-          console.error(error); 
+          console.log(error); 
 
           // Show the error message 
           Alert.alert(error.message); 
@@ -131,6 +129,7 @@ const Register = () => {
 
   };
 
+  // Rendering the register jsx component 
   return (
     <SafeAreaView style={styles.safeArea}>
       
