@@ -5,6 +5,18 @@ class HistoryDatabase:
         # load the db object 
         self.db = db 
 
+    # Creating a method for getting all the user's history, extract them, 
+    # Convert them into a csv, with the image name, and save it as a zip folder inside 
+    # the history folder 
+    def compileHistoryAsCsv(self): 
+        pass 
+
+    # Creating a method for getting all the user's history data, extract them, 
+    # And conver them into a json object, with the image name and file, and save everything in a 
+    # zip folder inside the history folder 
+    def compileHistoryAsJson(self): 
+        pass 
+
     # Creating a method for deleting the history data 
     def deleteUserHistory(self, id): 
         # Creating the sql statement 

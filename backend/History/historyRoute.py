@@ -138,3 +138,40 @@ def deleteHistory():
 
         # Returning the error message 
         return responseMessage 
+    
+# Creating a route for downloading the history data 
+@history.route("/download-history", methods=['GET'])
+def downloadHistory(): 
+    # Getting the request headers 
+    userToken = request.headers["userToken"]
+
+    # Decoding the user token and check if the user is logged in 
+    # Using try except block to decode the token 
+    try: 
+        # Decode the token 
+        decodedToken = jwt.decode(
+            userToken, 
+            key=secretKey, 
+            algorithms="HS256"
+        )
+
+        # Ensuring that it's only logged in users that have the ability to 
+        # Access the database 
+        if (decodedToken["isLoggedIn"]): 
+            # Create an instance of the history database class 
+            historyDb = HistoryDatabase(db)
+
+    # Except exception as error 
+    except Exception as error: 
+        # Display the error message 
+        print(f"[Error]: {error}")
+
+        # Build the response message 
+        responseMessage = {
+            "status": "error", 
+            "message": str(error), 
+            "statusCode": 500
+        }
+
+        # Sending back the error message 
+        return jsonify(responseMessage) 
