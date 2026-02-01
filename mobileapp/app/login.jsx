@@ -1,6 +1,6 @@
 // Importing the necessary modules 
 import { useState } from 'react';
-import { useRouter } from 'expo-router'; 
+import { useRouter, Stack } from 'expo-router'; 
 import {
   Alert,
   View,
@@ -42,7 +42,7 @@ const Login = () => {
 
         // Navigate the user to the dashboard page 
         router.replace("/dashboard");
-      }, 5000);
+      }, 1000);
     } else {
       // If it's an error, just hide it after 3 seconds
       setTimeout(() => setToast({ visible: false, message: "", type: "error" }), 3000);
@@ -127,6 +127,10 @@ const Login = () => {
   // Rendering the jsx component 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Adding the title  */}
+      <Stack.Screen options={{ title: "Login" }} />
+
+      {/* Adding the toast display */}
       {toast.visible && (
         <View style={[
           styles.toastContainer, 

@@ -1,5 +1,5 @@
 // Importing the necessary modules 
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { 
   View, 
   Text, 
@@ -40,6 +40,9 @@ const index = ({ navigation }) => {
     // Rendering the jsx 
     return(
         <SafeAreaView style={styles.container}>
+            {/* Adding the title  */}
+            <Stack.Screen options={{ title: "Welcome" }} />
+
             {/* Adding scroll view  */}
             <ScrollView showsVerticalScrollIndicator={true}>
                 {/* Hero section */}

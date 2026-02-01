@@ -37,7 +37,7 @@ const Auth = () => {
     }, []); 
 
     // Token will be null if no token is found 
-    return { token, isLoading }; 
+    return { token }; 
 }
 
 // Exporting the component 

@@ -11,7 +11,7 @@ import {
   Platform,
   SafeAreaView
 } from 'react-native';
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { User, Mail, Lock, ArrowRight } from 'lucide-react-native';
 import styles from '../styles/registerStyles';
 
@@ -132,6 +132,8 @@ const Register = () => {
   // Rendering the register jsx component 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Adding the title */}
+      <Stack.Screen options={{ title: "Register"}} />
       
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
