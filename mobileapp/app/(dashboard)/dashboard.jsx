@@ -1,3 +1,4 @@
+// Importing the necessary modules 
 import styles from '../../styles/dashboardStyles';
 import { useState, useRef, useEffect } from 'react';
 import { 
@@ -13,101 +14,145 @@ import { jwtDecode } from "jwt-decode";
 import io from 'socket.io-client';
 import { Play, Square, Activity, ShieldCheck, Zap, Terminal, RefreshCw } from 'lucide-react-native'; // Added RefreshCw
 
+// Getting the width of the mobile device 
 const { width } = Dimensions.get('window');
-const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL; 
+
+// Getting the server url 
+const serverUrl = process.env.SERVER_URL;
+
+// Connecting to the server using web sockets  
 const socket = io(serverUrl);
 
+// Creating the dashboard component 
 const Dashboard = () => {
-    // Auth Logic
+    // Setting the state 
     const [fullname, setFullname] = useState("User");
     const [permission, requestPermission] = useCameraPermissions();
 
-    // --- NEW STATE FOR CAMERA FACING ---
-    const [facing, setFacing] = useState('back'); // Default to back camera
+    // Setting the state for system interpretation 
+    const [facing, setFacing] = useState('back'); 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [interpretation, setInterpretation] = useState("System standby. Awaiting input...");
     
+    // Using ref to get the camera object, and interval 
     const cameraRef = useRef(null);
     const isAnalyzingRef = useRef(false);
     const intervalRef = useRef(null);
 
+    // Using use effect to run the program on when the component mounts 
     useEffect(() => {
         loadUser();
         setupSocket();
         return () => cleanup();
     }, []);
 
-    // ... (loadUser, setupSocket, cleanup functions remain the same)
-
+    // Creating a function for loading the user's name 
     const loadUser = async () => {
-        const token = await SecureStore.getItemAsync("userTokenData");
+        // Get the token data 
+        const token = await SecureStore.getItemAsync("userToken");
+
+        // if the token is present, execute the block of code below 
         if (token) {
+            // Using try catch block to decode the token
             try {
+                // Decode the token data, and set it as the fullname 
                 const decoded = jwtDecode(token);
                 setFullname(decoded.fullname);
             } catch (e) {
-                console.error("Token error", e);
+                // On error, log the error to the console 
+                console.log("Token error", e);
             }
         }
     };
 
+    // Creating a function for getting the inference result 
     const setupSocket = () => {
+        // Listen for the result, and save the result into the interpretation state 
         socket.on('inferenceResult', (data) => {
             if (!isAnalyzingRef.current) return;
+
+            // Save the analyzed result 
             setInterpretation(data.text);
         });
     };
 
+    // Clean up the state 
     const cleanup = () => {
         socket.off('inferenceResult');
         if (intervalRef.current) clearInterval(intervalRef.current);
     };
 
-    // --- NEW TOGGLE FUNCTION ---
+    // Creating a function to toggle the front and back camera 
     const toggleCameraFacing = () => {
         setFacing(current => (current === 'back' ? 'front' : 'back'));
     };
 
+    // Creating a function for toggling the analysis 
     const toggleAnalysis = async () => {
+        // if isAnalyzing is true, execute the block of code below
         if (isAnalyzing) {
+            // Stop the analysis
             stopAnalysis();
         } else {
+            // Else, start the analysis 
             await startAnalysis();
         }
     };
 
+    // Creating a function for starting the analysis 
     const startAnalysis = async () => {
+        // Ensure permission is granted or then request permission 
         if (!permission || !permission.granted) {
+            // Request permission 
             const res = await requestPermission();
             if (!res.granted) return;
         }
 
+        // Setting the analyzing state to true 
         setIsAnalyzing(true);
         isAnalyzingRef.current = true;
         setInterpretation("Engine active. Processing live feed...");
+
+        // Capture and send the frames at an interval of 4seconds 
         intervalRef.current = setInterval(captureAndSendFrame, 4000);
     };
 
+    // Creating a function for stopping the analysis 
     const stopAnalysis = () => {
+        // Set is analyzing to false 
         setIsAnalyzing(false);
+
+        // set is analyzing current as false 
         isAnalyzingRef.current = false;
+
+        // Clear the interval, and set the interpretation as "Analysis stopped" 
         if (intervalRef.current) clearInterval(intervalRef.current);
         setInterpretation("Analysis stopped.");
     };
 
+    // Creating a function for capturing and sending the frames to the ML server 
     const captureAndSendFrame = async () => {
+        // if the cameraRef.current, and isAnalyzingRef.current is true, 
+        // execute the block of code below 
         if (cameraRef.current && isAnalyzingRef.current) {
+            // Take the photo, with no shutter sound, with a quality of 0.5, with base64 encoding 
+            // and save it into the photo variable 
             const photo = await cameraRef.current.takePictureAsync({
                 base64: true,
                 shutterSound: false,
                 skipProcessing: true,
                 quality: 0.5,
             });
-            const token = await SecureStore.getItemAsync("userTokenData");
+
+            // Get the user's token value from the session storage, and send it along 
+            // side with the photo taken as a socket object 
+            const token = await SecureStore.getItemAsync("userToken");
             socket.emit('videoFrame', `data:image/jpeg;base64,${photo.base64}`, token);
         }
     };
 
+
+    // Rendering the jsx component 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
@@ -191,4 +236,5 @@ const Dashboard = () => {
     );
 };
 
+// Exporting the dashbaord component 
 export default Dashboard;

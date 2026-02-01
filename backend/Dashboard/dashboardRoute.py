@@ -73,7 +73,7 @@ def performAnalysis(imageData, userToken):
                 # Getting the duration 
                 duration = imageAnalysisResult["inferenceTime"]
 
-                print(len(imageData))
+                # print(len(imageData))
 
                 # Saving the data into the database but first connect 
                 # to the database 
@@ -85,7 +85,7 @@ def performAnalysis(imageData, userToken):
                     duration=duration
                 )
 
-                # Checking the response 
+                # Checking the response 
                 if (response["status"] == "success"):  
                     # Emit the inference result 
                     socketio.emit("inferenceResult", {"text": imageAnalysisResult["response"]})

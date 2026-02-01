@@ -1,15 +1,48 @@
 // Importing the necessary modules 
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+// Getting the width and height 
+const { width, height } = Dimensions.get('window');
 
 // Creating the styles component 
 const styles = StyleSheet.create({
+    imageContainer: { position: 'relative' },
+    zoomOverlay: {
+        position: 'absolute',
+        bottom: 5,
+        right: 5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: 4,
+        borderRadius: 6
+    },
+
+    // Modal Styles preserved from top (no duplicates found below)
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.95)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    closeModalBtn: {
+        position: 'absolute',
+        top: 60,
+        right: 25,
+        zIndex: 10,
+        padding: 10
+    },
+    fullImage: {
+        width: width,
+        height: height * 0.8
+    },
+
+    // Bottom versions (Duplicates from top removed, these were kept)
     safeArea: { flex: 1, backgroundColor: '#020617' },
     container: { flex: 1, paddingHorizontal: 16 },
     pageHeader: { marginTop: 20, marginBottom: 20 },
     titleWrapper: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 15 },
     headerTitle: { color: 'white', fontSize: 24, fontWeight: 'bold' },
     headerActions: { flexDirection: 'row', gap: 10 },
-    headerBtn: { backgroundColor: '#1e293b', padding: 12, borderRadius: 10, borderSize: 1, borderColor: '#334155' },
+    headerBtn: { backgroundColor: '#1e293b', padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#334155' },
     exportBtn: { backgroundColor: '#2563eb' },
     statsContainer: { flexDirection: 'row', gap: 12, marginBottom: 20 },
     statBox: { flex: 1, backgroundColor: '#0f172a', padding: 15, borderRadius: 15, borderWidth: 1, borderColor: '#1e293b' },
@@ -34,8 +67,7 @@ const styles = StyleSheet.create({
     emptyContainer: { alignItems: 'center', marginTop: 100 },
     emptyTitle: { color: 'white', fontSize: 18, fontWeight: 'bold', marginTop: 15 },
     emptySub: { color: '#64748b', marginTop: 5 }
-
 });
 
 // Exporting the styles component 
-export default styles; 
+export default styles;
