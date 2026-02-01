@@ -31,13 +31,17 @@ const Login = () => {
 
   // Creating a function for showing the alert box 
   const showToast = (message, type = "success") => {
+    // Show the success message, and navigate the user to the dashboard page 
     setToast({ visible: true, message, type });
     
     // If it's success, we wait 5 seconds then navigate
     if (type === "success") {
       setTimeout(() => {
+        // Remove the alert message
         setToast({ visible: false, message: "", type: "success" });
-        // router.replace("/dashboard");
+
+        // Navigate the user to the dashboard page 
+        router.replace("/dashboard");
       }, 5000);
     } else {
       // If it's an error, just hide it after 3 seconds
