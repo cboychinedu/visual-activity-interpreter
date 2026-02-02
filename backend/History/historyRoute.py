@@ -204,6 +204,20 @@ def downloadHistory(dataType):
                 # Sending back the request 
                 return jsonify(requestResponse)
 
+        # Else if the value is not true, execute this block of code 
+        # below 
+        else: 
+            # Generate an error response 
+            errorResponse = {
+                "status": "error", 
+                "message": "Invalid token value", 
+                "statusCode": 401
+            }
+
+            # Sending back the request
+            return jsonify(errorResponse)
+
+
     # Except exception as error 
     except Exception as error: 
         # Display the error message 
