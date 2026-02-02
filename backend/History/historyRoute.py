@@ -4,8 +4,8 @@
 # Importing the necessary modules 
 import os 
 import jwt 
-from flask import jsonify, request, Blueprint 
 from Database import DatabaseConnection, HistoryDatabase
+from flask import jsonify, request, Blueprint, send_from_directory
 
 # Getting the secret key 
 secretKey = os.getenv("SECRET_KEY")
@@ -140,8 +140,8 @@ def deleteHistory():
         return responseMessage 
     
 # Creating a route for downloading the history data 
-@history.route("/download-history", methods=['GET'])
-def downloadHistory(): 
+@history.route("/download-history/<dataType>", methods=['GET'])
+def downloadHistory(dataType): 
     # Getting the request headers 
     userToken = request.headers["userToken"]
 
@@ -160,6 +160,49 @@ def downloadHistory():
         if (decodedToken["isLoggedIn"]): 
             # Create an instance of the history database class 
             historyDb = HistoryDatabase(db)
+
+            # Checking the type of data type if its a csv or a json file 
+            if (dataType == "csv"): 
+                # Execute this block of code if the data to download is a csv file 
+                historyResponse = historyDb.compileHistoryAsCsv(
+                    email=decodedToken["email"]
+                )
+
+                # Extract only the filename from the full path 
+                filename = os.path.basename(historyResponse["path"])
+
+                # Checking the status of the history response if it was a success or an error 
+                if (historyResponse["status"] == "success"): 
+                    # if it was a success, execute this block of code 
+                    try: 
+                        # Sending the file 
+                        return send_from_directory(
+                            directory="historyExports", 
+                            path=filename, 
+                            as_attachment=True
+                        )
+
+                    # On error generated 
+                    except Exception as error:
+                        print(f"[Error]: File not found!, {error}") 
+                        return "File not found", 404
+                    
+
+            # Else if the data type is a json file needed 
+            elif (dataType == "json"): 
+                pass 
+
+            # 
+            else: 
+                # Generate the response message 
+                requestResponse = {
+                    "status": "error", 
+                    "message": "Invalid route parameter", 
+                    "statusCode": 404
+                }
+
+                # Sending back the request 
+                return jsonify(requestResponse)
 
     # Except exception as error 
     except Exception as error: 

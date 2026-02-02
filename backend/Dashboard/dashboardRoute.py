@@ -62,7 +62,7 @@ def performAnalysis(imageData, userToken):
                 # Saving the inference result to the database 
                 # Getting the timestamp 
                 now = datetime.now() 
-                timestamp = now.strftime("%H:%M:%S, %B %Y")
+                timestamp = now.strftime("%H:%M:%S, %d %B %Y")
 
                 # Getting the email value 
                 email = decodedToken["email"]

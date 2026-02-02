@@ -121,6 +121,56 @@ const History = () => {
         })
     };
 
+    // Creating a function for fetching and downloading the history data 
+    const downloadHistoryData = async (dataType) => {
+        // Using try catch block to download the data 
+        try {
+            // Define the endpoint 
+            const serverUrl = `${import.meta.env.VITE_SERVER_URL}/history/download-history/${dataType}`; 
+
+            // Getting the response 
+            const response = await fetch(serverUrl, {
+                method: "GET", 
+                headers: {
+                    "Content-Type": "application/json", 
+                    "userToken": Cookies.get("userTokenData")
+                }
+            }); 
+
+            // if the response is okay 
+            if (!response.ok) throw new Error("Download failed"); 
+
+            // Convert the response to a Blob file 
+            const blob = await response.blob(); 
+
+            // Create a temporary URL for the blob file 
+            const url = window.URL.createObjectURL(blob); 
+
+            // Create a hidden anchor element and click it 
+            const link = document.createElement('a'); 
+            link.href = url; 
+
+            // Setting the file name 
+            link.setAttribute('download', `historyReport.${dataType === 'csv' ? 'csv.zip' : 'json.zip' }`); 
+
+
+            // Append the link to the document link 
+            document.body.appendChild(link); 
+            link.click() 
+
+            // Cleanup 
+            link.parentNode.removeChild(link); 
+            window.URL.revokeObjectURL(url); 
+        }
+
+        // Catch the error 
+        catch (error) {
+            // Display the error message
+            console.log("Download error: ", error); 
+
+        }
+    }
+
     // On component mount, fetch the history data 
     useEffect(() => {       
         // Fetch the history data 
@@ -148,12 +198,19 @@ const History = () => {
                             </p>
                         </div>
                         
-                        <div className="flex flex-wrap justify-center md:justify-end gap-3 w-full md:w-auto">
-                            <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs sm:text-sm hover:bg-slate-800 transition-colors">
-                                <Filter className="w-4 h-4" /> Filter
+                        <div className="flex justify-center md:justify-end gap-3 w-[50%]">
+                            <button 
+                                onClick={() => downloadHistoryData('csv')}
+                                className="flex items-center gap-2 w-[100%] px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-bold hover:bg-blue-500 transition-all"
+                            >
+                                <Download className="w-4 h-4" /> Export As Csv
                             </button>
-                            <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-bold hover:bg-blue-500 transition-all">
-                                <Download className="w-4 h-4" /> Export All
+                            
+                            <button 
+                                onClick={() => downloadHistoryData('json')}
+                                className="flex items-center w-[100%] gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-bold hover:bg-blue-500 transition-all"
+                            >
+                                <Download className="w-4 h-4" /> Export As Json
                             </button>
                         </div>
                     </div>

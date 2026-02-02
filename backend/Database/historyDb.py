@@ -1,3 +1,12 @@
+# Importing the necessary modules 
+import os 
+import io 
+import csv
+import json 
+import base64
+import zipfile
+from datetime import datetime 
+
 # Creating a history database class 
 class HistoryDatabase: 
     # init method to load the db object 
@@ -5,11 +14,102 @@ class HistoryDatabase:
         # load the db object 
         self.db = db 
 
+        # Ensure a base directory for exports exists 
+        self.historyDir = "historyExports"
+
+        # Create a history directory if it dosen't exist 
+        if not os.path.exists(self.historyDir): 
+            os.makedirs(self.historyDir)
+
     # Creating a method for getting all the user's history, extract them, 
     # Convert them into a csv, with the image name, and save it as a zip folder inside 
     # the history folder 
-    def compileHistoryAsCsv(self): 
-        pass 
+    def compileHistoryAsCsv(self, email):
+        """
+        Extracts user history, creates a CSV, saves images, and zips them 
+        """ 
+        # Get the data 
+        historyResponse = self.getUserHistory(email=email) 
+
+        # if the history response status is errro, return the response 
+        if (historyResponse["status"] == "error"): 
+            return historyResponse
+        
+        # Else execute this block of code to extract the history 
+        data = historyResponse["data"]
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        zipFilename = f"history{email}{timestamp}.zip"
+        zipPath = os.path.join(self.historyDir, zipFilename)
+
+        # Using try catch block to create the zip file 
+        try: 
+            # Create an in-memory buffer for the zip file 
+            zipBuffer = io.BytesIO()
+
+            # Creating the zip file 
+            with zipfile.ZipFile(zipBuffer, "a", zipfile.ZIP_DEFLATED, False) as zipFile:
+                # Create the CSV content 
+                csvBuffer = io.StringIO() 
+                csvWriter = csv.writer(csvBuffer)
+                csvWriter.writerow(["ID", "Timestamp", "Interpretation", "Duration", "ImageFile"])
+
+                # For entry in the data 
+                for entry in data: 
+                    # Converting the entry into a dictionary object 
+                    entry = dict(entry) 
+                
+                    # Get the entry values 
+                    # (['id', 'imagedata', 'timestamp', 'interpretation', 'duration'])
+                    hid, imageData, timeVal, interpretation, duration = entry.values()
+                    imageName = f"image{hid}.jpg"
+
+                    # Add row to the CSV 
+                    csvWriter.writerow([hid, timeVal, interpretation, duration,imageName])
+
+                    # Process and add Image to zip 
+                    try:
+                        # Assuming imageData is base64 string 
+                        header, encoded = imageData.split(",", 1) if "," in imageData else (None, imageData)
+                        binaryImg = base64.b64decode(encoded)
+                        zipFile.writestr(f"images/{imageName}", binaryImg)
+
+                    # On exception, execute the block of code below 
+                    except Exception as error:
+                        # Display an error message 
+                        print(f"Failed to process the image {hid}: {error}")
+
+                # Adding the csv file to zip 
+                zipFile.writestr("historyData.csv", csvBuffer.getvalue())
+
+            # Save the buffer to a files 
+            with open(zipPath, "wb") as f: 
+                # Write the buffer to a file 
+                f.write(zipBuffer.getvalue())
+
+            # Building the response message 
+            responseMessage = {
+                "status": "success", 
+                "path": zipPath, 
+                "message": "CSV History zipped successfully"
+            }
+
+            # Returning the success message 
+            return responseMessage 
+
+        # On error generated, execute the block of code below 
+        except Exception as error:
+            # Display the error message  
+            print(f"[Export Error]: {error}")
+
+            # Building the response message 
+            responseMessage = {
+                "status": "error", 
+                "message": str(error)
+            }
+
+            # Sendingt the response message 
+            return responseMessage 
+    
 
     # Creating a method for getting all the user's history data, extract them, 
     # And conver them into a json object, with the image name and file, and save everything in a 
