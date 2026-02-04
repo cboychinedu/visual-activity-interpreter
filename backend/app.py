@@ -1,3 +1,9 @@
+# Author: Mbonu Chinedum Endurance 
+# Project Name: Visual Activity Interpreter 
+# Date Created: 2026-01-29 8:57:02 PM
+# Date Modified: 2026-02-04 3:25:54 PM
+
+
 # importing the necessary modules 
 import os 
 import logging 

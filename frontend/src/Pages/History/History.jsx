@@ -1,5 +1,6 @@
 // Importing the necessary modules 
 import Cookies from "js-cookie"; 
+import AlertComponent from "@components/Alert"; 
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import { 
@@ -20,6 +21,11 @@ import {
 
 // Creating the history component 
 const History = () => {
+    // Setting the state for the alert
+    const [displayAlert, setDisplayAlert] = useState(false); 
+    const [alertMessage, setAlertMessage] = useState(null); 
+    const [alertSeverity, setAlertSeverity] = useState(null);
+
     // Setting the history data state 
     const [historyData, setHistoryData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +61,7 @@ const History = () => {
 
             // On success, save the response into a data array
             const responseData = await response.json();
-            console.log(responseData); 
+            // console.log(responseData); 
             
             // Display the history data by saving it into the state variable 
             setHistoryData(Array.isArray(responseData.data) ? responseData.data : []);
@@ -99,7 +105,7 @@ const History = () => {
         // On response, execute the block of code below 
         .then(response => response.json())
         .then(responseData => {
-            console.log(responseData); 
+            // console.log(responseData); 
 
             // if the response data status is success 
             if (responseData.status === "success") {
@@ -123,6 +129,27 @@ const History = () => {
 
     // Creating a function for fetching and downloading the history data 
     const downloadHistoryData = async (dataType) => {
+        // Checking the history data 
+        if (historyData.length === 0) {
+            // Display an error message 
+            setAlertSeverity("error"); 
+            setDisplayAlert(true); 
+            setAlertMessage(`Cannot download ${dataType}, the history is empty!`); 
+
+            // Delay for 5 seconds, then remove the alert message 
+            setTimeout(() => {
+                // Remove the alert message
+                setDisplayAlert(false); 
+                setAlertSeverity(null);  
+                setAlertMessage(null)
+            
+            }, 5000); 
+
+            // Close the execution 
+            return 
+        }
+
+
         // Using try catch block to download the data 
         try {
             // Define the endpoint 
@@ -182,6 +209,13 @@ const History = () => {
     return (
         <Fragment>
             <Navbar />
+
+            {/* Addding alert */}
+            {displayAlert && (
+                <div> 
+                    <AlertComponent severity={alertSeverity} message={alertMessage}/> 
+                </div>
+            )}
             
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans px-3 sm:px-4 lg:p-8">
                 <div className="max-w-6xl mx-auto pt-6 sm:pt-10">

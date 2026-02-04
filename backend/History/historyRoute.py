@@ -184,15 +184,52 @@ def downloadHistory(dataType):
 
                     # On error generated 
                     except Exception as error:
+                        # Displaying the error message 
                         print(f"[Error]: File not found!, {error}") 
-                        return "File not found", 404
+
+                        # Returning an error message 
+                        return jsonify({
+                            "status": "error", 
+                            "message": "File not found!", 
+                            "statusCode": 404
+                        })
                     
-
             # Else if the data type is a json file needed 
-            elif (dataType == "json"): 
-                pass 
+            elif (dataType == "json"):
+                # Execute this block of code if the data to download is a json file 
+                historyResponse = historyDb.compileHistoryAsJson(
+                    email=decodedToken["email"]
+                )
 
-            # 
+                # Extract only the filename from the full path 
+                filename = os.path.basename(historyResponse["path"])
+
+                # Checking the status of the history response if it was a success 
+                # or an error 
+                if (historyResponse["status"] == "success"): 
+                    # if it was a success, execute this block of code 
+                    try: 
+                        # Sending the file 
+                        return send_from_directory(
+                            directory="historyExports", 
+                            path=filename, 
+                            as_attachment=True
+                        )
+                    
+                    # On error generated 
+                    except Exception as error: 
+                        # Displaying the error message 
+                        print(f"[Error]: File not found!, {error}")
+
+                        # Returing an error message 
+                        return jsonify({
+                            "status": "error", 
+                            "message": "File not found", 
+                            "statusCode": 404 
+                        })
+
+            # Else if the route parameter was not a json, or csv, execute the 
+            # block of code below 
             else: 
                 # Generate the response message 
                 requestResponse = {

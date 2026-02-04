@@ -38,7 +38,7 @@ class HistoryDatabase:
         # Else execute this block of code to extract the history 
         data = historyResponse["data"]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        zipFilename = f"history{email}{timestamp}.zip"
+        zipFilename = f"history{email}{timestamp}csv.zip"
         zipPath = os.path.join(self.historyDir, zipFilename)
 
         # Using try catch block to create the zip file 
@@ -114,8 +114,90 @@ class HistoryDatabase:
     # Creating a method for getting all the user's history data, extract them, 
     # And conver them into a json object, with the image name and file, and save everything in a 
     # zip folder inside the history folder 
-    def compileHistoryAsJson(self): 
-        pass 
+    def compileHistoryAsJson(self, email):
+        """
+        Docstring for compileHistoryAsJson
+        
+        :Extracts the user history, create a JSON file, saves images, and zips them
+        """
+        historyResponse = self.getUserHistory(email=email)
+
+        # if the history response was an error, execute the block of code below 
+        if (historyResponse["status"] == "error"): 
+            return historyResponse
+        
+        # Else execute the block of code below 
+        data = historyResponse["data"]
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        zipFilename = f"history{email}{timestamp}json.zip"
+        zipPath = os.path.join(self.historyDir, zipFilename)
+
+        # Using try except block to zip the json object 
+        try: 
+            # Creating the zip buffer object 
+            zipBuffer = io.BytesIO()
+            jsonList = []
+
+            # Load the zip file 
+            with zipfile.ZipFile(zipBuffer, "a", zipfile.ZIP_DEFLATED, False) as zipFile: 
+                # Load the entry 
+                for entry in data: 
+                    # Convert the entry into a dictionary 
+                    entry = dict(entry)
+
+                    # Extract all the value for each entry 
+                    hid, imageData, timeVal, interpretation, duration = entry.values() 
+                    imageName = f"image{hid}.jpg"
+
+                    # Build the JSON object for this entry 
+                    jsonList.append({
+                        "id": hid, 
+                        "timestamp": timeVal, 
+                        "interpretation": interpretation, 
+                        "duration": duration, 
+                        "imageFile": imageName
+                    })
+
+                    # Adding the image into the zip file 
+                    try: 
+                        # Get the header, and the encoded data for the image 
+                        header, encoded = imageData.split(",", 1) if "," in imageData else (None, imageData)
+                        binaryImg = base64.b64decode(encoded)
+                        zipFile.writestr(f"images/{imageName}", binaryImg)
+
+                    # Except error execute the block of code below 
+                    except Exception as error:
+                        # Display the error message 
+                        print(f"Image error {hid}: {error}")
+
+                # Add the JSON file to zip 
+                zipFile.writestr("historyData.json", json.dumps(jsonList, indent=4))
+
+            # Saving the zip file to disk 
+            with open(zipPath, "wb") as f: 
+                f.write(zipBuffer.getvalue()) 
+
+            # Build the success message 
+            responseMessage = {
+                "status": "success", 
+                "path": zipPath, 
+                "message": "JSON History zipped successfully"
+            }
+
+            # Sending the response message 
+            return responseMessage
+
+        # On error encountered, execute the block of code below 
+        except Exception as error: 
+            # Building the response message 
+            responseMessage = {
+                "status": "error", 
+                "message": str(error)
+            }
+
+            # Sending the response message 
+            return responseMessage
+
 
     # Creating a method for deleting the history data 
     def deleteUserHistory(self, id): 
