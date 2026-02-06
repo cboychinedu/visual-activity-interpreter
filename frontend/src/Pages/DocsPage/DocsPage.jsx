@@ -65,11 +65,17 @@ const DocsPage = () => {
                   <p className="mb-4 text-slate-300">Initialize the environment and launch the local stream server:</p>
                   <div className="bg-black/50 rounded-lg p-4 font-mono text-sm text-blue-300 border border-slate-700">
                     <p># Clone the repository</p>
-                    <p className="text-white">git clone https://github.com/vlm-project/vai-vision.git</p>
-                    <p className="mt-2"># Install dependencies</p>
-                    <p className="text-white">pip install -r requirements.txt && npm install</p>
-                    <p className="mt-2"># Run the development server</p>
-                    <p className="text-white">npm run dev</p>
+                    <p className="text-white">git clone https://github.com/cboychinedu/visual-activity-interpreter.git</p>
+                    <p className='mt-3'> # Navigate into the Frontend Folder </p>
+                    <p className='text-white'> $ cd frontend <br /> 
+                        $ npm install . <br /> 
+                        $ npm run dev 
+                    </p>
+                    <p className='mt-3'> # Open a new terminal and navigate into the backend Folder </p>
+                    <p className='text-white'> $ cd backend <br /> 
+                        $ pip install -r requirements.txt <br /> 
+                        $ python3 app.py 
+                    </p>
                   </div>
                 </div>
               </section>
