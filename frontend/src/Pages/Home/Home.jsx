@@ -23,11 +23,11 @@ const Home = () => {
                 High-performance system processing live camera frames to identify human activities using Computer Vision and Deep Learning.
                 </p>
                 <div className="mt-10 flex gap-4">
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all">Launch Vision Stream</button>
-                <button className="px-8 py-3 border border-slate-700 rounded-full font-bold hover:bg-slate-800 transition-all">Read Documentation</button>
+                <button className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all" onClick={() => window.location.href="/login"}>Launch Vision Stream</button>
+                <button className="px-8 py-3 border border-slate-700 rounded-full font-bold hover:bg-slate-800 transition-all" onClick={() => window.location.href="/docs"}>Read Documentation</button>
                 </div>
             </div>
-            
+
             {/* Placeholder for images/image.jpg mentioned in README */}
             <div className="lg:w-1/2 mt-12 lg:mt-0 relative">
                 <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full"></div>

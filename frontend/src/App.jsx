@@ -12,6 +12,7 @@ import History from './Pages/History/History';
 import NotFound from './Pages/Notfound/Notfound';
 import Register from "./Pages/Register/Register"; 
 import Dashboard from './Pages/Dashboard/Dashboard';
+import DocsPage from './Pages/DocsPage/DocsPage';
 
 // Creating the App component 
 class App extends Component {
@@ -43,6 +44,7 @@ class App extends Component {
             {/* Adding the routes */}
             <Route path="/" element={<Home />} /> 
             <Route path="/about" element={<About />} /> 
+            <Route path="/docs" element={<DocsPage /> } /> 
             <Route 
               path="/login" 
               element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <Login /> } 
