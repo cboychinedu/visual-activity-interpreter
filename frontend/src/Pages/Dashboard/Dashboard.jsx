@@ -16,7 +16,6 @@ const Dashboard = () => {
     // Auth & Cookie Logic
     const userCookie = Cookies.get("userTokenData"); 
     let fullname;  
-    let email
 
     // if the user cookie exists, execute the block of code 
     // below 
@@ -122,11 +121,11 @@ const Dashboard = () => {
             setIsAnalyzing(true);
             setInterpretation("Engine active. Processing live feed...");
 
-            // Start the frame capture loop (every 2 seconds)
+            // Start the frame capture loop (every 8 seconds)
             intervalRef.current = setInterval(() => {
                 // Send the video frame to the server for analysis 
                 sendFrame();
-            }, 4000);
+            }, 8000);
 
         } 
         // On error generated, log the error to the console, and display it 
