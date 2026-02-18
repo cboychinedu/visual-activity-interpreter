@@ -4,7 +4,8 @@ compinit
 
 # ===== Ubuntu-style prompt =====
 # Format: username@hostname:~/directory$
-PROMPT='%F{yellow}%f%F{green}%n@%m%f:%F{blue}%~%f$ '
+# PROMPT='%F{yellow}%f%F{green}%n@%m%f:%F{blue}%~%f$ '
+PROMPT='%F{green}%n@%m%f:%F{blue}~%f$ '
 
 # ===== Linux color support =====
 export LS_COLORS='di=34:ln=36:so=35:pi=33:ex=32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;42'
