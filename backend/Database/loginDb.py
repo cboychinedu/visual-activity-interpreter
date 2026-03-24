@@ -43,7 +43,7 @@ class LoginDatabase:
                         "message": "User not found!"
                     }
 
-                    # Returing the user data 
+                    # Returning the user data 
                     return responseData 
 
             # Else if there is no connection 

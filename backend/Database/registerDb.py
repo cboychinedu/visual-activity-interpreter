@@ -6,7 +6,7 @@ class RegisterDatabase:
         self.db = db 
 
     # Creating a method to get data from the database to 
-    # Check if the user is registered 
+    # Check if the user is registered 
     def getUserDataForRegistration(self, email):
         # Creating the sql statement 
         sqlStatement = """SELECT id, fullname, email, password FROM users WHERE email = %s;"""

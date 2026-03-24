@@ -55,5 +55,5 @@ def registerPage():
             password=passwordHash
         )
 
-        # Returing the response message 
+        # Returning the response message 
         return jsonify(responseMessage) 

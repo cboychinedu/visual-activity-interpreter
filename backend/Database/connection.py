@@ -36,7 +36,7 @@ class DatabaseConnection:
             # Display the error and close the connection 
             print(f"[Error] {error}")
 
-            # Closing up the connection 
+            # Closing up the connection # 
             self.close()
 
     # Creating a method for closing the connection to the database 
